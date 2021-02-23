@@ -18,17 +18,22 @@
             <div class="section-address">
                 <p class="title">收货地址</p>
                 <div class="address-body">
-                    <ul>
-                        <li :class="item.defaultFlag == 1 ? 'in-section' : ''" v-for="item in address" :key="item.id">
-                            <h2>{{ item.name }}</h2>
-                            <p class="phone">{{ item.phone }}</p>
-                            <p class="address">{{ item.address }}</p>
-                        </li>
-                        <li class="add-address" @click="addAddress">
-                            <i class="el-icon-circle-plus-outline"></i>
-                            <p>添加新地址</p>
-                        </li>
-                    </ul>
+                    <!--<ul>-->
+                        <!--<li :class="item.defaultFlag == 1 ? 'in-section' : ''" v-for="item in address" :key="item.id">-->
+                            <!--<h2>{{ item.name }}</h2>-->
+                            <!--<p class="phone">{{ item.phone }}</p>-->
+                            <!--<p class="address">{{ item.address }}</p>-->
+                        <!--</li>-->
+                        <!--<li class="add-address" @click="addAddress">-->
+                            <!--<i class="el-icon-circle-plus-outline"></i>-->
+                            <!--<p>添加新地址</p>-->
+                        <!--</li>-->
+                    <!--</ul>-->
+
+                    <address-list :ismove="false" :isedit="false" :canEdit="true"
+                                  :isshowdefault="true"
+                                  @getAddressId="setAddressId" />
+
                 </div>
             </div>
             <!-- 选择地址END -->
@@ -111,43 +116,62 @@
             </div>
             <!-- 结算导航END -->
         </div>
-        <!-- 主要内容容器END -->
-        <el-dialog title="收货地址" :visible.sync="dialogFormVisible">
-            <el-form :model="form">
-                <el-form-item label="姓名：" :label-width="formLabelWidth">
-                    <el-input v-model="form.name" autocomplete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="电话：" :label-width="formLabelWidth">
-                    <el-input v-model="form.phone"></el-input>
-                </el-form-item>
-                <el-form-item label="地址：" :label-width="formLabelWidth">
-                    <VDistpicker style="fontSize: 12px;" :province="form.province.value" :city="form.city.value" :area="form.area.value" @selected="addressSelected"/>
-                </el-form-item>
-                <el-form-item label="详细地址：" :label-width="formLabelWidth">
-                    <el-input placeholder="小区楼栋/乡村名称" v-model="form.detailAddress"></el-input>
-                </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveAddress">确 定</el-button>
+
+        <!-- 模拟支付 -->
+        <el-drawer
+                title="支付方式"
+                :visible.sync="drawer"
+                direction="btt"
+                >
+            <el-select v-model="payType" placeholder="选择支付方式">
+                <el-option label="支付宝" :value="0"></el-option>
+                <el-option label="微信" :value="1"></el-option>
+            </el-select>
+            <div style="text-align: right; margin: 10px 0 0">
+                <el-button type="primary" size="mini" @click="paySuccessBtn">确定
+                </el-button>
             </div>
-        </el-dialog>
+        </el-drawer>
+
+        <!-- 主要内容容器END -->
+        <!--<el-dialog title="收货地址" :visible.sync="dialogFormVisible">-->
+            <!--<el-form :model="form">-->
+                <!--<el-form-item label="姓名：" :label-width="formLabelWidth">-->
+                    <!--<el-input v-model="form.name" autocomplete="off"></el-input>-->
+                <!--</el-form-item>-->
+                <!--<el-form-item label="电话：" :label-width="formLabelWidth">-->
+                    <!--<el-input v-model="form.phone"></el-input>-->
+                <!--</el-form-item>-->
+                <!--<el-form-item label="地址：" :label-width="formLabelWidth">-->
+                    <!--<VDistpicker style="fontSize: 12px;" :province="form.province.value" :city="form.city.value" :area="form.area.value" @selected="addressSelected"/>-->
+                <!--</el-form-item>-->
+                <!--<el-form-item label="详细地址：" :label-width="formLabelWidth">-->
+                    <!--<el-input placeholder="小区楼栋/乡村名称" v-model="form.detailAddress"></el-input>-->
+                <!--</el-form-item>-->
+            <!--</el-form>-->
+            <!--<div slot="footer" class="dialog-footer">-->
+                <!--<el-button @click="dialogFormVisible = false">取 消</el-button>-->
+                <!--<el-button type="primary" @click="saveAddress">确 定</el-button>-->
+            <!--</div>-->
+        <!--</el-dialog>-->
     </div>
 </template>
 <script>
 import { mapGetters } from 'vuex'
 import { mapActions } from 'vuex'
 const VDistpicker = () => import('v-distpicker')
-import apiData from '@/lib/apiData'
+import apiData from '@/lib/apiData';
+const AddressList = () => import('./AddressList')
 export default {
     name: 'ConfirmOrder',
     components: {
-        VDistpicker
+        VDistpicker,
+      AddressList
     },
     data() {
         return {
             // 虚拟数据
-            confirmAddress: 1, // 选择的地址id
+            confirmAddress: "", // 选择的地址id
             // 地址列表
             address: [
                 {
@@ -173,10 +197,13 @@ export default {
                 area: {}
             },
             formLabelWidth: '120px',
+          orderNo:'',//订单编号
+          drawer:false,//支付方式是否打开
+          payType:0,//支付方式是否打开
         }
     },
     created() {
-        this.getAddress();
+        //this.getAddress();
         // 如果没有勾选购物车商品直接进入确认订单页面,提示信息并返回购物车
         if (this.getCheckNum < 1) {
             this.notifyError('请勾选商品后再结算')
@@ -205,6 +232,9 @@ export default {
                 }
             })
         },
+      setAddressId(id){
+        this.confirmAddress = id;
+      },
         // 添加地址
         addAddress() {
             this.dialogFormVisible = true;
@@ -236,12 +266,47 @@ export default {
             })
         },
         addOrder() {
+          const cartItemIds = [];
+          this.getCheckGoods.forEach((item) => {
+            cartItemIds.push(item.cartItemId)
+          })
             this.$axios
-                .post('/api/user/order/addOrder', {
-                    user_id: this.$store.getters.getUser.user_id,
-                    products: this.getCheckGoods,
+                .post(apiData.saveOrder, {
+                  addressId: this.confirmAddress,
+                  cartItemIds,
                 })
                 .then((res) => {
+                    this.orderNo = res.data.data;
+                    this.drawer = true
+                    //let products = this.getCheckGoods
+                    // switch (res.data.code) {
+                    //     // “001”代表结算成功
+                    //     case '001':
+                    //         for (let i = 0; i < products.length; i++) {
+                    //             const temp = products[i]
+                    //             // 删除已经结算的购物车商品
+                    //             this.deleteShoppingCart(i)
+                    //         }
+                    //         // 提示结算结果
+                    //         this.notifySucceed(res.data.msg)
+                    //         // 跳转我的订单页面
+                    //         this.$router.push({ path: '/order' })
+                    //         break
+                    //     default:
+                    //         // 提示失败信息
+                    //         this.notifyError(res.data.msg)
+                    // }
+                })
+                .catch((err) => {
+                    return Promise.reject(err)
+                })
+        },
+      paySuccessBtn() {
+            this.$axios
+                .get(`${apiData.paySuccess}?orderNo=${this.orderNo}&payType=${this.payType}`)
+                .then((res) => {
+                    this.orderNo = '';
+                    this.drawer = false
                     let products = this.getCheckGoods
                     switch (res.data.code) {
                         // “001”代表结算成功
@@ -256,6 +321,9 @@ export default {
                             // 跳转我的订单页面
                             this.$router.push({ path: '/order' })
                             break
+                      case '200':
+                        this.notifySucceed('支付成功');
+                        break;
                         default:
                             // 提示失败信息
                             this.notifyError(res.data.msg)

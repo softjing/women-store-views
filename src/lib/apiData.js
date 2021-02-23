@@ -27,6 +27,10 @@ const apiData = {
   categories:`${INTERFACE}categories`,
   // 获取分类下的数据 商品搜索
   search:`${INTERFACE}search`,
+  // 生成订单接口
+  saveOrder:`${INTERFACE}saveOrder`,
+  // 模拟支付
+  paySuccess:`${INTERFACE}paySuccess`,
 }
 
 

@@ -18,15 +18,13 @@
           <el-form-item label="确认密码：" prop="confirmPwd">
             <el-input v-model="form.confirmPwd" show-password ></el-input>
           </el-form-item>
-
-
         </el-form>
         <div class="btn-wrapper">
           <el-button type="primary" @click="sureChange" >确认更改</el-button>
           <el-button type="primary">取消更改</el-button>
         </div>
       </div>
-      <address-list />
+      <address-list :ismove="true" :isedit="true"  :isshowdefault="false" :canEdit="true"/>
 
 
 

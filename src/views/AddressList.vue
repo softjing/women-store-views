@@ -3,17 +3,21 @@
        <el-row>
          <template  v-for="(o, index) in list" >
            <el-card shadow="hover" :body-style="{ padding: '0px' }" :key="o.addressId"
-                    :offset="index > 0 ? 2 : 0" :class="`item ${o.defaultFlag == 1 ?
-                    'greenBorder' : ''}`" >
-             <div class="el-icon-check-box" v-if="o.defaultFlag == 1" >
-               <i class="el-icon-check"  ></i>
+                    :offset="index > 0 ? 2 : 0" :class="`item ${o.defaultFlag == 1 && isshowdefault ?
+                    'greenBorder' : ''}`"
+
+           >
+             <div @click="chooseAddress(o.addressId,index)">
+               <div class="el-icon-check-box" v-if="o.defaultFlag == 1 && isshowdefault" >
+                 <i class="el-icon-check"  ></i>
+               </div>
+               <i v-if="ismove" class="el-icon-delete"  @click="deleteAddress(o.addressId)"  ></i>
+               <i v-if="isedit" class="el-icon-edit"  @click="editAddress(o.addressId)"  ></i>
+               <p class="title">{{o.userName}}</p>
+               <p class="content">{{o.userPhone}}</p>
+               <p class="content" >{{o.provinceName}}  {{o.cityName != '市辖区' ? o.cityName:''
+                 }}  {{o.regionName}}  {{o.detailAddress}}</p>
              </div>
-             <i class="el-icon-delete"  @click="deleteAddress(o.addressId)"  ></i>
-             <i class="el-icon-edit"  @click="editAddress(o.addressId)"  ></i>
-             <p class="title">{{o.userName}}</p>
-             <p class="content">{{o.userPhone}}</p>
-             <p class="content" >{{o.provinceName}}  {{o.cityName != '市辖区' ? o.cityName:''
-               }}  {{o.regionName}}  {{o.detailAddress}}</p>
            </el-card>
          </template>
 
@@ -75,6 +79,24 @@
     components: {
       VDistpicker
     },
+    props:{
+      ismove: {
+        type: Boolean,
+        default: false
+      },
+      isedit: {
+        type: Boolean,
+        default: false
+      },
+      isshowdefault: {
+        type: Boolean,
+        default: false
+      },
+      canEdit: {
+        type: Boolean,
+        default: false
+      }
+    },
     data() {
       return {
         list:[],
@@ -111,7 +133,27 @@
       getAddress() {
         this.$axios.get(apiData.getAddress).then(res => {
           this.list = res.data.data;
+
+          //获取默认地址的id传给父组件
+          const list = this.list.filter((item) => {return item.defaultFlag == 1})
+
+          this.$emit('getAddressId', list[0].addressId)
         })
+      },
+      //选择地址
+      chooseAddress(id,index){
+        if(this.canEdit){
+          this.list.forEach((item,i) => {
+            item.defaultFlag = 0;
+            if(i == index){
+              item.defaultFlag = 1;
+            }
+          })
+
+          this.$emit('getAddressId', id);
+        }else{
+          return false
+        }
       },
       //显示新增弹框
       showAddDialog(){
