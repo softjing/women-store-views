@@ -108,34 +108,12 @@ export default {
                 // 用户没有登录
                 this.setShoppingCart([])
             } else {
-                // 用户已经登录,获取该用户的购物车信息
-                this.$axios
-                    .post('/api/user/shoppingCart/getShoppingCart', {
-                        user_id: val.user_id,
-                    })
-                    .then((res) => {
-                        if (res.data.code === '001') {
-                            // 001 为成功, 更新vuex购物车状态
-                            this.isLogin = true
-                            this.setShoppingCart(res.data.shoppingCartData)
-                        } else {
-                            // 提示失败信息
-                            // this.notifyError(res.data.msg)
-                        }
-                    })
-                    .catch((err) => {
-                        return Promise.reject(err)
-                    })
+                
             }
         },
     },
     created() {
-      this.isLogin = this.$store.getters.getToken
-        // 获取浏览器localStorage，判断用户是否已经登录
-        if (localStorage.getItem('user')) {
-            // 如果已经登录，设置vuex登录状态
-            this.setUser(JSON.parse(localStorage.getItem('user')))
-        }
+      this.getShoppingCart()
     },
   beforeUpdate() {
     this.isLogin = this.$store.getters.getToken
@@ -143,11 +121,24 @@ export default {
     methods: {
         ...mapActions(['setUser', 'setShowLogin', 'setShoppingCart',
           'setShowAgreement','setToken']),
-        // getUserInfo() {
-        //     this.$http.get(apiData.getUserInfo).then(res => {
-        //         console.log(res)
-        //     })
-        // },
+        getShoppingCart(){
+          // 用户已经登录,获取该用户的购物车信息
+          this.$axios
+              .get(apiData.shopCart)
+              .then((res) => {
+                const {data} = res
+                  if (data.resultCode == '200') {
+                      this.isLogin = true
+                      this.setShoppingCart(data.data)
+                  } else {
+                      // 提示失败信息
+                      this.notifyError(data.message)
+                  }
+              })
+              .catch((err) => {
+                  return Promise.reject(err)
+              })
+        },
         login() {
             // 跳转登录页
            this.$router.push({name: 'Login'});

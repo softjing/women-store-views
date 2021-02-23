@@ -35,31 +35,30 @@
                         <el-checkbox :value="item.check" @change="checkChange($event, index)"></el-checkbox>
                     </div>
                     <div class="pro-img">
-                        <router-link :to="{ path: '/goods/details', query: { productID: item.productID } }">
-                            <img :src="item.productImg" />
+                        <router-link :to="{ path: '/goods/details', query: { productID: item.goodsId } }">
+                            <img :src="item.goodsCoverImg" />
                         </router-link>
                     </div>
                     <div class="pro-name">
-                        <router-link :to="{ path: '/goods/details', query: { productID: item.productID } }">{{
-                            item.productName
+                        <router-link :to="{ path: '/goods/details', query: { productID: item.goodsId } }">{{
+                            item.goodsName
                         }}</router-link>
                     </div>
-                    <div class="pro-price">{{ item.price }}元</div>
+                    <div class="pro-price">{{ item.sellingPrice }}元</div>
                     <div class="pro-num">
                         <el-input-number
                             size="small"
-                            :value="item.num"
-                            @change="handleChange($event, index, item.productID)"
+                            :value="item.goodsCount"
+                            @change="(value)=>handleChange(value, index,item.cartItemId)"
                             :min="1"
-                            :max="item.maxNum"
                         ></el-input-number>
                     </div>
-                    <div class="pro-total pro-total-in">{{ item.price * item.num }}元</div>
-                    <div class="pro-action">
+                    <div class="pro-total pro-total-in">{{ item.sellingPrice * item.goodsCount }}元</div>
+                    <div class="pro-action" v-model='visible'>
                         <el-popover placement="right">
                             <p>确定删除吗？</p>
                             <div style="text-align: right; margin: 10px 0 0">
-                                <el-button type="primary" size="mini" @click="deleteItem($event, item.id, item.productID)">确定</el-button>
+                                <el-button type="primary" size="mini" @click="deleteItem($event, item.cartItemId,index)">确定</el-button>
                             </div>
                             <i class="el-icon-error" slot="reference" style="font-size: 18px;"></i>
                         </el-popover>
@@ -111,59 +110,50 @@ import { mapGetters } from 'vuex'
 import apiData from '@/lib/apiData';
 export default {
     data() {
-        return {}
+        return {
+          visible:false
+        }
     },
     methods: {
-        ...mapActions(['updateShoppingCart', 'deleteShoppingCart', 'checkAll']),
+        ...mapActions(['updateShoppingCart', 'deleteShoppingCart', 'checkAll','setShoppingCart']),
         // 修改商品数量的时候调用该函数
-        handleChange(currentValue, key, productID) {
-            // 当修改数量时，默认勾选
-            this.updateShoppingCart({ key: key, prop: 'check', val: true })
+        handleChange(value, index,cartItemId) {
             // 向后端发起更新购物车的数据库信息请求
             this.$axios
-                .post('/api/user/shoppingCart/updateShoppingCart', {
-                    user_id: this.$store.getters.getUser.user_id,
-                    product_id: productID,
-                    num: currentValue,
+                .put(apiData.shopCart, {
+                    "cartItemId": cartItemId,
+                    "goodsCount": value,
                 })
                 .then((res) => {
-                    switch (res.data.code) {
-                        case '001':
-                            // “001”代表更新成功
-                            // 更新vuex状态
-                            this.updateShoppingCart({
-                                key: key,
-                                prop: 'num',
-                                val: currentValue,
-                            })
-                            // 提示更新成功信息
-                            this.notifySucceed(res.data.msg)
-                            break
-                        default:
-                            // 提示更新失败信息
-                            this.notifyError(res.data.msg)
+                  const {data} = res
+                   if(data.resultCode == 200){
+                     this.updateShoppingCart({
+                         key:index,
+                         val:value,
+                         prop:'goodsCount',
+                     })
+                     this.notifySucceed(data.message)
+                    }else{
+                      this.notifyError(data.message)
                     }
                 })
                 .catch((err) => {
                     return Promise.reject(err)
                 })
         },
-        checkChange(val, key) {
+        checkChange(val, index) {
             // 更新vuex中购物车商品是否勾选的状态
-            this.updateShoppingCart({ key: key, prop: 'check', val: val })
+            this.updateShoppingCart({ key: index, prop: 'check', val: val })
         },
         // 向后端发起删除购物车的数据库信息请求
-        deleteItem(e, id, productID) {
+        deleteItem(e, cartItemId,index) {
+          this.visible = false
             this.$axios
-                .delete(`${apiData.deleteCartItem}/${id}`,{
-                  headers:{
-                    'token':localStorage.getItem('token')
-                  }
-                }).then((res) => {
+                .delete(`${apiData.shopCart}/${cartItemId}`).then((res) => {
                   const {data} = res
                   if(data.resultCode == 200){
                     // 更新vuex状态
-                    this.deleteShoppingCart(id)
+                    this.deleteShoppingCart(index)
                     // 提示删除成功信息
                     this.notifySucceed(data.message)
                   }else{

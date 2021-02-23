@@ -249,7 +249,7 @@ export default {
                             for (let i = 0; i < products.length; i++) {
                                 const temp = products[i]
                                 // 删除已经结算的购物车商品
-                                this.deleteShoppingCart(temp.id)
+                                this.deleteShoppingCart(i)
                             }
                             // 提示结算结果
                             this.notifySucceed(res.data.msg)

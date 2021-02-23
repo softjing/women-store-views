@@ -1,39 +1,27 @@
 export default {
     state: {
         shoppingCart: [
-            {
-                id: "1", // 购物车id
-                productID: "1", // 商品id
-                productName: "衣服1", // 商品名称
-                productImg: "https://g-search1.alicdn.com/img/bao/uploaded/i4/i2/199343403/O1CN01DtT3QB1b0cTHfYtyR_!!0-item_pic.jpg_250x250.jpg", // 商品图片
-                price: 120, // 商品价格
-                num: 1, // 商品数量
-                maxNum: "", // 商品限购数量
-                check: false // 是否勾选
-            },
-            {
-                id: "1", // 购物车id
-                productID: "2", // 商品id
-                productName: "衣服2", // 商品名称
-                productImg: "https://g-search1.alicdn.com/img/bao/uploaded/i4/i2/199343403/O1CN01DtT3QB1b0cTHfYtyR_!!0-item_pic.jpg_250x250.jpg", // 商品图片
-                price: 120, // 商品价格
-                num: 1, // 商品数量
-                maxNum: "", // 商品限购数量
-                check: false // 是否勾选
-            }
+            // {
+            //     id: "1", // 购物车id
+            //     productID: "1", // 商品id
+            //     productName: "衣服1", // 商品名称
+            //     productImg: "https://g-search1.alicdn.com/img/bao/uploaded/i4/i2/199343403/O1CN01DtT3QB1b0cTHfYtyR_!!0-item_pic.jpg_250x250.jpg", // 商品图片
+            //     price: 120, // 商品价格
+            //     num: 1, // 商品数量
+            //     maxNum: "", // 商品限购数量
+            //     check: false // 是否勾选
+            // },
+            // {
+            //     id: "1", // 购物车id
+            //     productID: "2", // 商品id
+            //     productName: "衣服2", // 商品名称
+            //     productImg: "https://g-search1.alicdn.com/img/bao/uploaded/i4/i2/199343403/O1CN01DtT3QB1b0cTHfYtyR_!!0-item_pic.jpg_250x250.jpg", // 商品图片
+            //     price: 120, // 商品价格
+            //     num: 1, // 商品数量
+            //     maxNum: "", // 商品限购数量
+            //     check: false // 是否勾选
+            // }
         ],
-        /* shoppingCart结构
-        shoppingCart = {
-        id: "", // 购物车id
-        productID: "", // 商品id
-        productName: "", // 商品名称
-        productImg: "", // 商品图片
-        price: "", // 商品价格
-        num: "", // 商品数量
-        maxNum: "", // 商品限购数量
-        check: false // 是否勾选
-        } 
-        */
     },
     getters: {
         getShoppingCart(state) {
@@ -45,7 +33,7 @@ export default {
             let totalNum = 0
             for (let i = 0; i < state.shoppingCart.length; i++) {
                 const temp = state.shoppingCart[i]
-                totalNum += temp.num
+                totalNum += temp.goodsCount
             }
             return totalNum
         },
@@ -80,7 +68,7 @@ export default {
             for (let i = 0; i < state.shoppingCart.length; i++) {
                 const temp = state.shoppingCart[i]
                 if (temp.check) {
-                    totalNum += temp.num
+                    totalNum += temp.goodsCount
                 }
             }
             return totalNum
@@ -91,7 +79,7 @@ export default {
             for (let i = 0; i < state.shoppingCart.length; i++) {
                 const temp = state.shoppingCart[i]
                 if (temp.check) {
-                    totalPrice += temp.price * temp.num
+                    totalPrice += temp.sellingPrice * temp.goodsCount
                 }
             }
             return totalPrice
@@ -108,20 +96,9 @@ export default {
             state.shoppingCart.unshift(data)
         },
         updateShoppingCart(state, payload) {
-            // 更新购物车
-            // 可更新商品数量和是否勾选
-            // 用于购物车点击勾选及加减商品数量
-            if (payload.prop == 'num') {
-                // 判断效果的商品数量是否大于限购数量或小于1
-                if (state.shoppingCart[payload.key].maxNum < payload.val) {
-                    return
-                }
-                if (payload.val < 1) {
-                    return
-                }
-            }
-            // 根据商品在购物车的数组的索引和属性更改
-            state.shoppingCart[payload.key][payload.prop] = payload.val
+          const newArr = [...state.shoppingCart]
+          newArr[payload.key][payload.prop] = payload.val
+          state.shoppingCart = newArr
         },
         addShoppingCartNum(state, productID) {
             // 增加购物车商品数量
@@ -129,20 +106,15 @@ export default {
             for (let i = 0; i < state.shoppingCart.length; i++) {
                 const temp = state.shoppingCart[i]
                 if (temp.productID == productID) {
-                    if (temp.num < temp.maxNum) {
-                        temp.num++
+                    if (temp.goodsCount < temp.maxNum) {
+                        temp.goodsCount++
                     }
                 }
             }
         },
-        deleteShoppingCart(state, id) {
+        deleteShoppingCart(state, index) {
             // 根据购物车id删除购物车商品
-            for (let i = 0; i < state.shoppingCart.length; i++) {
-                const temp = state.shoppingCart[i]
-                if (temp.id == id) {
-                    state.shoppingCart.splice(i, 1)
-                }
-            }
+            state.shoppingCart.splice(index, 1)
         },
         checkAll(state, data) {
             // 点击全选按钮，更改每个商品的勾选状态
@@ -164,8 +136,8 @@ export default {
         addShoppingCartNum({ commit }, productID) {
             commit('addShoppingCartNum', productID)
         },
-        deleteShoppingCart({ commit }, id) {
-            commit('deleteShoppingCart', id)
+        deleteShoppingCart({ commit }, index) {
+            commit('deleteShoppingCart', index)
         },
         checkAll({ commit }, data) {
             commit('checkAll', data)

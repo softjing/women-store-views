@@ -17,24 +17,24 @@
 
             <!-- 右侧内容区 -->
             <div class="content">
-                <h1 class="name">{{ productDetails.product_name }}</h1>
-                <p class="intro">{{ productDetails.product_intro }}</p>
+                <h1 class="name">{{ productDetails.goodsName }}</h1>
+                <p class="intro">{{ productDetails.goodsIntro }}</p>
                 <p class="store">女性商城</p>
                 <div class="price">
-                    <span>{{ productDetails.product_selling_price }}元</span>
-                    <span v-show="productDetails.product_price != productDetails.product_selling_price" class="del"
-                        >{{ productDetails.product_price }}元</span
+                    <span>{{ productDetails.sellingPrice }}元</span>
+                    <span v-show="productDetails.originalPrice != productDetails.sellingPrice" class="del"
+                        >{{ productDetails.originalPrice }}元</span
                     >
                 </div>
                 <div class="pro-list">
-                    <span class="pro-name">{{ productDetails.product_name }}</span>
+                    <span class="pro-name">{{ productDetails.goodsName }}</span>
                     <span class="pro-price">
-                        <span>{{ productDetails.product_selling_price }}元</span>
-                        <span v-show="productDetails.product_price != productDetails.product_selling_price" class="pro-del"
-                            >{{ productDetails.product_price }}元</span
+                        <span>{{ productDetails.sellingPrice }}元</span>
+                        <span v-show="productDetails.originalPrice != productDetails.sellingPrice" class="pro-del"
+                            >{{ productDetails.originalPrice }}元</span
                         >
                     </span>
-                    <p class="price-sum">总计 : {{ productDetails.product_selling_price }}元</p>
+                    <p class="price-sum">总计 : {{ productDetails.sellingPrice }}元</p>
                 </div>
                 <!-- 内容区底部按钮 -->
                 <div class="button">
@@ -90,10 +90,10 @@ export default {
             dis: false, // 控制“加入购物车按钮是否可用”
             productID: '', // 商品id
             productDetails: {
-                product_name: '衣服1',
-                product_intro: '舒服好看，物美价廉',
-                product_selling_price: 100,
-                product_price: 199,
+                goodsName: '衣服1',
+                goodsIntro: '舒服好看，物美价廉',
+                sellingPrice: 100,
+                originalPrice: 199,
 
             }, // 商品详细信息
             productPicture: [
@@ -130,28 +130,18 @@ export default {
     },
     // 通过路由获取商品id
     activated() {
-        // console.log('mouted = ', this.$route.query.productID)
-        if (this.$route.query.productID != undefined) {
-            this.id = this.$route.query.id
-            this.productID = this.$route.query.productID
-            this.notCart = false
-            this.$store.state.shoppingCart.shoppingCart.forEach((item) => {
-                if (item.productID == this.productID) {
-                    this.notCart = true
-                    // console.log(this.notCart)
-                }
-            })
-        }
+        this.goodsId = this.$route.params.categoryID
+        this.getDetails();
     },
     watch: {
         // 监听商品id的变化，请求后端获取商品数据
-        // productID: function(val) {
-        //     this.getDetails(val)
-        //     this.getDetailsPicture(val)
-        // },
+        goodsId: function(val) {
+          this.getDetails(val)
+          this.getDetailsPicture(val)
+        },
     },
     mounted() {
-        this.getDetails();
+        // this.getDetails();
     },
     methods: {
         ...mapActions(['unshiftShoppingCart', 'addShoppingCartNum']),
@@ -161,13 +151,15 @@ export default {
         },
         // 获取商品详细信息
         getDetails(val) {
-            this.$http.get(apiData.goodsDetail, {
-                    params: {
-                        productID: 10895,
-                    }
-                })
+          this.$axios
+            .get(apiData.goodsDetail+this.$route.params.categoryID)
                 .then((res) => {
-                    this.productDetails = res.data.Product[0]
+                  const {data} = res
+                  if(data.resultCode == 200){
+                    this.productDetails = data.data
+                  }else{
+                    this.notifyError(data.message)
+                  }
                 })
                 .catch((err) => {
                     return Promise.reject(err)
@@ -194,31 +186,21 @@ export default {
                 return
             }
             this.$axios
-                .post(apiData.addCartItem, {
+                .post(apiData.shopCart, {
                     goodsCount: 1,
-                    goodsId: this.id,
+                    goodsId: this.goodsId,
                 })
                 .then((res) => {
                     this.notCart = true
-                    switch (res.data.code) {
-                        case '001':
-                            // 新加入购物车成功
-                            this.unshiftShoppingCart(res.data.shoppingCartData[0])
-                            this.notifySucceed(res.data.msg)
-                            break
-                        case '002':
-                            // 该商品已经在购物车，数量+1
-                            this.addShoppingCartNum(this.productID)
-                            this.notifySucceed(res.data.msg)
-                            break
-                        case '003':
-                            // 商品数量达到限购数量
-                            this.dis = true
-                            this.notifyError(res.data.msg)
-                            break
-                        default:
-                            this.notifyError(res.data.msg)
+                    const {data} = res
+
+                    if(data.resultCode == 200){
+                      this.unshiftShoppingCart(data.shoppingCartData && data.shoppingCartData[0])
+                      this.notifySucceed(data.message)
+                    }else{
+                      this.notifyError(data.message)
                     }
+
                 })
                 .catch((err) => {
                     return Promise.reject(err)
