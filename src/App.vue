@@ -75,6 +75,7 @@ import Footer from '@/components/Footer.vue';
 import Agreement from '@/components/Agreement.vue';
 import { mapActions, mapGetters, mapState } from 'vuex'
 import apiData from '@/lib/apiData'
+
 export default {
     components: {
         Footer,
