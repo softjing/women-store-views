@@ -117,31 +117,30 @@ export default {
             newGoodses: [], // 最新推荐
             recommendGoodses: [],
             treeList: [
-                {
-                    title: '手机 pad',
-                    children: [
-                        {
-                            id: '0',
-                            img: '',
-                            title: '小米11'
-                        }
-                    ]
-                },
-                {
-                    title: '手机 pad',
-                    children: [
-                        {
-                            id: '1',
-                            img: require('@/assets/logo.png'),
-                            title: '小米11'
-                        },
-                        {
-                            id: '2',
-                            img: '',
-                            title: '小米11 pro'
-                        }
-                    ]
-                }
+            //     {
+            //         title: '手机 pad',
+            //         children: [
+            //             {
+            //                 id: '0',
+            //                 img: '',
+            //                 title: '小米11'
+            //             }
+            //         ]
+            //     },
+            //     {
+            //         title: '手机 pad',
+            //         children: [
+            //             {
+            //                 id: '1',
+            //                 title: '小米11',
+            //             },
+            //             {
+            //                 id: '2',
+            //                 img: '',
+            //                 title: '小米11 pro'
+            //             }
+            //         ]
+            //     }
             ]
         }
     },
@@ -188,12 +187,19 @@ export default {
             }
         },
     },
-    mounted() {
+    created() {
         this.getHome();
     },
     methods: {
         // 获取首页数据
         getHome() {
+            this.$http.get(apiData.categories).then(res => {
+              if(res.resultCode == 200) {
+                this.treeList = res.data
+              }else{
+                this.notifyError(res.data.message)
+              }
+            })
             this.$http.get(apiData.getHome).then(res => {
                 if(res.resultCode == 200) {
                     // 轮播图数据

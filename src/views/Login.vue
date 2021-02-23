@@ -99,7 +99,7 @@ import md5 from 'md5';
       login() {
         let data = {
           loginName: this.account,
-          passwordMd5:md5(this.password)
+          passwordMd5:this.password//md5(this.password)
         }
         this.$axios.post(apiData.login,data).then(res => {
           const data = res.data;

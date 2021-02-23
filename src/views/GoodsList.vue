@@ -31,7 +31,7 @@
         <!-- 主要内容区 -->
         <div class="main">
             <div class="list">
-                <MyList :list="product" v-if="product.length > 0"></MyList>
+                <MyList :list="productList" v-if="productList.length > 0"></MyList>
                 <div v-else class="none-product">抱歉没有找到相关的商品，请看看其他的商品</div>
             </div>
             <!-- 分页 -->
@@ -50,39 +50,43 @@
     </div>
 </template>
 <script>
+import apiData from '@/lib/apiData';
 export default {
     data() {
         return {
-            categoryList: '', //分类列表
-            categoryID: [], // 分类id
-            product: [
-                {   id:'1',
-                    product_id: '1',
-                    product_picture: 'https://img.alicdn.com/bao/uploaded/i1/92688455/O1CN01luycfl2CKRMkUneZV_!!92688455.jpg_b.jpg',
-                    product_name: '衣服1',
-                    product_title: '品质有保证',
-                    product_selling_price: 123,
-                    product_price: 199
-                },
-                {
-                    id:'2',
-                    product_id: '2',
-                    product_picture: 'https://img.alicdn.com/bao/uploaded/i1/92688455/O1CN01luycfl2CKRMkUneZV_!!92688455.jpg_b.jpg',
-                    product_name: '衣服2',
-                    product_title: '品质有保证',
-                    product_selling_price: 123,
-                    product_price: 199
-                },
-                {
-                    id:'3',
-                    product_id: '3',
-                    product_picture: 'https://img.alicdn.com/bao/uploaded/i3/92688455/O1CN01Bagzvh2CKRMklRq0y_!!92688455.jpg_b.jpg',
-                    product_name: '衣服3',
-                    product_title: '品质有保证',
-                    product_selling_price: 133,
-                    product_price: 199
-                }
-            ], // 商品列表
+            // categoryList: '', //分类列表
+            // categoryID: [], // 分类id
+            categoryID: '', // 分类id
+            name:'',//分类名
+            // product: [
+            //     {   id:'1',
+            //         product_id: '1',
+            //         product_picture: 'https://img.alicdn.com/bao/uploaded/i1/92688455/O1CN01luycfl2CKRMkUneZV_!!92688455.jpg_b.jpg',
+            //         product_name: '衣服1',
+            //         product_title: '品质有保证',
+            //         product_selling_price: 123,
+            //         product_price: 199
+            //     },
+            //     {
+            //         id:'2',
+            //         product_id: '2',
+            //         product_picture: 'https://img.alicdn.com/bao/uploaded/i1/92688455/O1CN01luycfl2CKRMkUneZV_!!92688455.jpg_b.jpg',
+            //         product_name: '衣服2',
+            //         product_title: '品质有保证',
+            //         product_selling_price: 123,
+            //         product_price: 199
+            //     },
+            //     {
+            //         id:'3',
+            //         product_id: '3',
+            //         product_picture: 'https://img.alicdn.com/bao/uploaded/i3/92688455/O1CN01Bagzvh2CKRMklRq0y_!!92688455.jpg_b.jpg',
+            //         product_name: '衣服3',
+            //         product_title: '品质有保证',
+            //         product_selling_price: 133,
+            //         product_price: 199
+            //     }
+            // ], 
+            // 商品列表
             productList: '',
             total: 0, // 商品总量
             pageSize: 15, // 每页显示的商品数量
@@ -96,27 +100,30 @@ export default {
         // this.getCategory()
     },
     activated() {
-        this.activeName = '-1' // 初始化分类列表当前选中的id为-1
-        this.total = 0 // 初始化商品总量为0
-        this.currentPage = 1 //初始化当前页码为1
-        // 如果路由没有传递参数，默认为显示全部商品
-        if (Object.keys(this.$route.query).length == 0) {
-            this.categoryID = []
-            this.activeName = '0'
-            return
-        }
-        // 如果路由传递了categoryID，则显示对应的分类商品
-        if (this.$route.query.categoryID != undefined) {
-            this.categoryID = this.$route.query.categoryID
-            if (this.categoryID.length == 1) {
-                this.activeName = '' + this.categoryID[0]
-            }
-            return
-        }
-        // 如果路由传递了search，则为搜索，显示对应的分类商品
-        if (this.$route.query.search != undefined) {
-            this.search = this.$route.query.search
-        }
+      this.categoryID = this.$route.params.goodsCategoryId
+        // this.activeName = '-1' // 初始化分类列表当前选中的id为-1
+        // this.total = 0 // 初始化商品总量为0
+        // this.currentPage = 1 //初始化当前页码为1
+        // // 如果路由没有传递参数，默认为显示全部商品
+        // if (Object.keys(this.$route.query).length == 0) {
+        //     this.categoryID = []
+        //     this.activeName = '0'
+        //     return
+        // }
+        // // 如果路由传递了categoryID，则显示对应的分类商品
+        // if (this.$route.query.categoryID != undefined) {
+        //     this.categoryID = this.$route.query.categoryID
+        //     debugger
+        //     this.name = this.$route.query.name
+        //     if (this.categoryID.length == 1) {
+        //         this.activeName = '' + this.categoryID[0]
+        //     }
+        //     return
+        // }
+        // // 如果路由传递了search，则为搜索，显示对应的分类商品
+        // if (this.$route.query.search != undefined) {
+        //     this.search = this.$route.query.search
+        // }
     },
     watch: {
         // 监听点击了哪个分类标签，通过修改分类id，响应相应的商品
@@ -201,22 +208,38 @@ export default {
         },
         // 向后端请求全部商品或分类商品数据
         getData() {
-          if(this.categoryID.length == 0){return}
-            // 如果分类列表为空则请求全部商品数据，否则请求分类商品数据
-            const api = this.categoryID.length == 0 ? '/api/product/getAllProduct' : '/api/product/getProductByCategory'
+          //请求对应分类商品数据
             this.$axios
-                .post(api, {
-                    categoryID: this.categoryID,
-                    currentPage: this.currentPage,
-                    pageSize: this.pageSize,
+                .get(apiData.search, {
+                    goodsCategoryId: this.goodsCategoryId,
                 })
                 .then((res) => {
-                    this.product = res.data.Product
-                    this.total = res.data.total
+                  const {data={}} = res
+                  if(data.resultCode == 200){
+                    this.productList = data.productList
+                  }else{
+                    this.notifyError(data.message)
+                  }
                 })
                 .catch((err) => {
                     return Promise.reject(err)
                 })
+          // if(this.categoryID.length == 0){return}
+          //   // 如果分类列表为空则请求全部商品数据，否则请求分类商品数据
+          //   const api = this.categoryID.length == 0 ? '/api/product/getAllProduct' : '/api/product/getProductByCategory'
+          //   this.$axios
+          //       .post(api, {
+          //           categoryID: this.categoryID,
+          //           currentPage: this.currentPage,
+          //           pageSize: this.pageSize,
+          //       })
+          //       .then((res) => {
+          //           this.product = res.data.Product
+          //           this.total = res.data.total
+          //       })
+          //       .catch((err) => {
+          //           return Promise.reject(err)
+          //       })
         },
         // 通过搜索条件向后端请求商品数据
         getProductBySearch() {
@@ -269,7 +292,7 @@ export default {
     margin: 0 auto;
 }
 .nav .product-nav .title {
-    width: 50px;
+    /* width: 50px; */
     font-size: 16px;
     font-weight: 700;
     float: left;

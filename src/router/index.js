@@ -25,7 +25,7 @@ const routes = [
         component: () => import('../views/ResetPwd.vue'),
     },
     {
-        path: '/goodsList',
+        path: '/goodsList/:goodsCategoryId',
         name: 'GoodsList',
         component: () => import('../views/GoodsList.vue'),
     },

@@ -21,7 +21,12 @@ const apiData = {
   goodsDetail: `${INTERFACE}goods/detail/`,
   // 给所传手机号发送短信验证码
   sendVerifityCode: `${INTERFACE}sendVerifityCode/`,
+  // 购物车列表获取 添加购物车 删除购物车 更新购物车
   shopCart:`${INTERFACE}shop-cart`,
+  // 获取分类列表
+  categories:`${INTERFACE}categories`,
+  // 获取分类下的数据 商品搜索
+  search:`${INTERFACE}search`,
 }
 
 
