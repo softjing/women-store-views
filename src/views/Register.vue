@@ -42,11 +42,11 @@
           <p v-show="autofocus" class="login-wrapper-account-warning"><i class="el-icon-warning"></i>手机号格式不正确</p>
         </el-form-item>
         <el-form-item label="密码" prop="pass" >
-          <el-input placeholder="密码" v-model="RegisterUser.pass" >
+          <el-input placeholder="密码" v-model="RegisterUser.pass" show-password >
           </el-input>
         </el-form-item>
         <el-form-item label="确认密码" prop="confirmPass">
-          <el-input placeholder="再次确认密码" v-model="RegisterUser.confirmPass" >
+          <el-input placeholder="再次确认密码" v-model="RegisterUser.confirmPass" show-password >
           </el-input>
         </el-form-item>
         <el-form-item>
