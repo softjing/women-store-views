@@ -5,7 +5,7 @@ exports.install = function(Vue) {
     // 封装提示成功的弹出框
     Vue.prototype.notifySucceed = function(msg) {
         this.$notify({
-            title: '成功',
+            //title: '成功',
             message: msg,
             type: 'success',
             offset: 100,

@@ -44,8 +44,8 @@ import md5 from 'md5';
       return {
         showModel: 'account', // 展示模块
         showModelText: '手机短信登录/注册',
-        account: '15622091887', // 账号
-        password: '7258AECBBE28EA7D4E4A46C1AF2087CC', // 密码
+        account: '18725788789', // 账号
+        password: 'a11111', // 密码
         phoneNumber: '', // 手机号
         verificationCode: '', // 验证码
         autofocus: false, // 聚焦
@@ -71,6 +71,7 @@ import md5 from 'md5';
           this.autofocus = false;
           this.countdown();
           // 调接口
+
         } else {
           console.log('验证失败');
           // 聚焦
@@ -98,18 +99,21 @@ import md5 from 'md5';
       login() {
         let data = {
           loginName: this.account,
-          passwordMd5: md5(this.password)
+          passwordMd5:md5(this.password)
         }
         this.$axios.post(apiData.login,data).then(res => {
-          if(res.resultCode == 200) {
-            localStorage.setItem('token', res.data.data);
+          const data = res.data;
+          if(data.resultCode == 200) {
+            localStorage.setItem('token', data.data);
             setTimeout(() => {
               this.getUserInfo();
             }, 2000)
+            this.notifySucceed('登陆成功');
             this.$router.push({name: 'Home'});
-            }
+            }else{
+            this.notifyError(data.message)
+          }
 
-          this.notifySucceed(res.message);
         })
       },
       getUserInfo() {

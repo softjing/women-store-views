@@ -19,6 +19,8 @@ const apiData = {
   saveAddress: `${INTERFACE}address`,
   // 商品详情
   goodsDetail: `${INTERFACE}goods/detail/`,
+  // 给所传手机号发送短信验证码
+  sendVerifityCode: `${INTERFACE}sendVerifityCode/`,
 }
 
 
