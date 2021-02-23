@@ -1,82 +1,176 @@
 <template>
   <div id="content-wrapper" class="personCenter-wrapper">
-    <div style="width: 66%; margin: 0 auto;">
+    <div style="width: 80%; margin: 0 auto;">
       <h3>个人中心</h3>
       <h4>亲爱的<a href="javascript:;">{{userName}}</a>，填写真实的资料，有助于好友找到你哦。</h4>
-      <el-form ref="form" :model="form" label-width="120px" style="margin: 20px auto; border: 1px solid grey; padding: 40px;">
-        <el-form-item label="当前头像：">
-          <Upload :imageUrl="form.avatar"/>
-        </el-form-item>
-        <el-form-item label="昵称：">
-          <el-input v-model="form.nickName"></el-input>
-        </el-form-item>
-        <el-form-item label="真实姓名：">
-          <el-input v-model="form.name"></el-input>
-        </el-form-item>
-        <el-form-item label="登录密码：">
-          <el-input v-model="form.password" show-password></el-input>
-        </el-form-item>
-        <el-form-item label="确认密码：">
-          <el-input v-model="form.confirmPwd" show-password></el-input>
-        </el-form-item>
-        <el-form-item label="性别：">
-          <el-radio v-model="form.sex" label="1">男</el-radio>
-          <el-radio v-model="form.sex" label="2">女</el-radio>
-        </el-form-item>
-        <el-form-item label="生日：">
-          <el-date-picker
-            v-model="form.date"
-            type="date"
-            placeholder="选择日期">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="选择地区：">
-          <VDistpicker style="fontSize: 12px;"/>
-        </el-form-item>
-        <el-form-item label="详细地址：">
-          <el-input placeholder="小区楼栋/乡村名称"></el-input>
-        </el-form-item>
-      </el-form>
-      <div class="btn-wrapper">
-        <el-button type="primary">确认更改</el-button>
-        <el-button type="primary">取消更改</el-button>
+      <div style="margin: 20px auto; border: 1px solid grey; padding: 40px;">
+        <el-form ref="form" :rules="rules" :model="form" label-width="120px" >
+
+          <el-form-item label="昵称：" prop="nickName">
+            <el-input v-model="form.nickName"></el-input>
+          </el-form-item>
+          <el-form-item label="个性签名：" prop="introduceSign">
+            <el-input v-model="form.introduceSign" ></el-input>
+          </el-form-item>
+          <el-form-item label="登录密码：" prop="password">
+            <el-input v-model="form.password" show-password></el-input>
+          </el-form-item>
+          <el-form-item label="确认密码：" prop="confirmPwd">
+            <el-input v-model="form.confirmPwd" show-password ></el-input>
+          </el-form-item>
+
+
+        </el-form>
+        <div class="btn-wrapper">
+          <el-button type="primary" @click="sureChange" >确认更改</el-button>
+          <el-button type="primary">取消更改</el-button>
+        </div>
       </div>
+      <address-list />
+
+
+
     </div>
   </div>
 </template>
 
 <script>
   import apiData from '@/lib/apiData';
-  const Upload = () => import('@/components/Upload.vue');
   const VDistpicker = () => import('v-distpicker')
+  const AddressList = () => import('./AddressList')
   export default {
     components: {
-      Upload,
-      VDistpicker
+      VDistpicker,AddressList
     },
     data() {
+
+      // 用户名的校验方法
+      let validateName = (rule, value, callback) => {
+        // if (!value) {
+        //   return callback(new Error('请输入用户名'))
+        // }
+        // 用户名以字母开头,长度在5-16之间,允许字母数字下划线
+        const userNameRule = /^[a-zA-Z][a-zA-Z0-9_]{4,15}$/
+        if (!userNameRule.test(value)) {
+          return callback(new Error('字母开头,长度5-16之间,允许字母数字下划线'))
+        }
+        return callback()
+      }
+      // 密码的校验方法
+      let validatePass = (rule, value, callback) => {
+        if (value === '') {
+          return callback()
+        }
+        // 密码以字母开头,长度在6-18之间,允许字母数字和下划线
+        const passwordRule = /^[a-zA-Z]\w{5,17}$/
+        if (!passwordRule.test(value)) {
+          //this.$refs.ruleForm.validateField('checkPass')
+          return callback(new Error('字母开头,长度6-18之间,允许字母数字和下划线'))
+        }
+        return callback()
+      }
+      // 确认密码的校验方法
+      let validateConfirmPass = (rule, value, callback) => {
+        if (this.form.password === '') {
+          return callback()
+        }
+        // 校验是否以密码一致
+        if (this.form.password == '' || value !== this.form.password) {
+          return callback(new Error('两次输入的密码不一致'))
+        }
+        return callback()
+      }
+
       return {
         userName: '用户1',
+        isLogin: true,
         form: {
-          avatar: '', // 头像
           nickName: '', // 昵称
-          name: '', // 真实姓名
           password: '', // 密码
           confirmPwd: '', // 确认密码
-          sex: '1', // 性别
-          date: '' // 生日
+          introduceSign: '', // 个性签名
         },
+        // 用户信息校验规则,validator(校验方法),trigger(触发方式),blur为在组件 Input 失去焦点时触发
+        rules: {
+          // nickName: [
+          //   {validator: validateName, trigger: 'blur' }
+          // ],
+          password: [{
+            validator: validatePass, trigger: 'blur' }],
+          confirmPwd: [{
+            validator: validateConfirmPass, trigger: 'blur' }],
+        },
+
       }
     },
     created() {
-      this.getPersonInfo();
+      this.isLogin = this.$store.getters.getToken;
+      if(this.isLogin){
+        this.getPersonInfo();
+      }else{
+        this.$router.push({name: 'Login'});
+      }
+
+    },
+    beforeUpdate() {
+      this.isLogin = this.$store.getters.getToken
     },
     methods: {
       // 获取个人信息
       getPersonInfo() {
         this.$axios.get(apiData.getUserInfo).then(res => {
-          console.log(res)
+          if(res.data.resultCode == '416'){
+            this.$router.push({name: 'Login'});
+          }else if(res.data.resultCode == '200'){
+            this.form.nickName = res.data.data.nickName; // 昵称
+            this.form.introduceSign = res.data.data.introduceSign; // 个性签名
+          }
+
         })
+      },
+      sureChange(){
+
+        let data = {};
+        if(this.form.nickName){
+          Object.assign(data,{
+            nickName: this.form.nickName,
+          })
+        }
+        if(this.form.introduceSign){
+          Object.assign(data,{
+            introduceSign: this.form.introduceSign,
+          })
+        }
+        if(this.form.password){
+          Object.assign(data,{
+            confirmPwd: this.form.confirmPwd,
+          })
+        }
+        this.$refs['form'].validate((valid) => {
+          //如果通过校验开始注册
+          if (valid) {
+            this.$axios.put(apiData.getUserInfo, {...data},{
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            })
+              .then((res) => {
+                const data = res.data;
+                if(data.resultCode == 200) {
+                  this.notifySucceed('修改成功');
+                }else{
+                  this.notifyError(data.message)
+                }
+              })
+              .catch((err) => {
+                return Promise.reject(err)
+              })
+          } else {
+            return false
+          }
+        })
+
+
       }
     }
   }
