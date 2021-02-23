@@ -15,15 +15,20 @@
         <!-- 分类标签 -->
         <div class="nav">
             <div class="product-nav">
-                <div class="title">分类</div>
-                <el-tabs v-model="activeName" type="card">
+                <div class=".title">分类</div>
+                <div class="orderBy">
+                  排序：
+                  <span :class="{active:orderBy=='new'}" @click='orderBy="new"'>按时间</span>
+                  <span :class="{active:orderBy=='price'}" @click='orderBy="price"'>按价格</span>
+                </div>
+                <!-- <el-tabs v-model="activeName" type="card">
                     <el-tab-pane
                         v-for="item in categoryList"
                         :key="item.category_id"
                         :label="item.category_name"
                         :name="'' + item.category_id"
                     />
-                </el-tabs>
+                </el-tabs> -->
             </div>
         </div>
         <!-- 分类标签END -->
@@ -58,12 +63,13 @@ export default {
             // categoryID: [], // 分类id
             categoryID: '', // 分类id
             name:'',//分类名
+            orderBy:'new',//排序new 按时间排序  price 按价格
             // product: [
             //     {   id:'1',
             //         product_id: '1',
             //         product_picture: 'https://img.alicdn.com/bao/uploaded/i1/92688455/O1CN01luycfl2CKRMkUneZV_!!92688455.jpg_b.jpg',
             //         product_name: '衣服1',
-            //         product_title: '品质有保证',
+            //         product_.title: '品质有保证',
             //         product_selling_price: 123,
             //         product_price: 199
             //     },
@@ -72,7 +78,7 @@ export default {
             //         product_id: '2',
             //         product_picture: 'https://img.alicdn.com/bao/uploaded/i1/92688455/O1CN01luycfl2CKRMkUneZV_!!92688455.jpg_b.jpg',
             //         product_name: '衣服2',
-            //         product_title: '品质有保证',
+            //         product_.title: '品质有保证',
             //         product_selling_price: 123,
             //         product_price: 199
             //     },
@@ -81,7 +87,7 @@ export default {
             //         product_id: '3',
             //         product_picture: 'https://img.alicdn.com/bao/uploaded/i3/92688455/O1CN01Bagzvh2CKRMklRq0y_!!92688455.jpg_b.jpg',
             //         product_name: '衣服3',
-            //         product_title: '品质有保证',
+            //         product_.title: '品质有保证',
             //         product_selling_price: 133,
             //         product_price: 199
             //     }
@@ -89,9 +95,10 @@ export default {
             // 商品列表
             productList: '',
             total: 0, // 商品总量
-            pageSize: 15, // 每页显示的商品数量
+            totalPage:0,//总页数
+            pageSize: 10, // 每页显示的商品数量
             currentPage: 1, //当前页码
-            activeName: '-1', // 分类列表当前选中的id
+            // activeName: '-1', // 分类列表当前选中的id
             search: '', // 搜索条件
         }
     },
@@ -127,38 +134,40 @@ export default {
     },
     watch: {
         // 监听点击了哪个分类标签，通过修改分类id，响应相应的商品
-        activeName: function(val) {
-            if (val == 0) {
-                this.categoryID = []
-            }
-            if (val > 0) {
-                this.categoryID = [Number(val)]
-            }
-            // 初始化商品总量和当前页码
-            this.total = 0
-            this.currentPage = 1
-            // 更新地址栏链接，方便刷新页面可以回到原来的页面
-            this.$router.push({
-                name: 'Goods',
-                query: { categoryID: this.categoryID },
-            })
+        // activeName: function(val) {
+        //     if (val == 0) {
+        //         this.categoryID = []
+        //     }
+        //     if (val > 0) {
+        //         this.categoryID = [Number(val)]
+        //     }
+        //     // 初始化商品总量和当前页码
+        //     this.total = 0
+        //     this.currentPage = 1
+        //     // 更新地址栏链接，方便刷新页面可以回到原来的页面
+        //     this.$router.push({
+        //         name: 'Goods',
+        //         query: { categoryID: this.categoryID },
+        //     })
+        // },
+         // 监听排序条件，响应相应的商品
+        orderBy:function(val) {
+          this.getData()
         },
         // 监听搜索条件，响应相应的商品
         search: function(val) {
-            if (val != '') {
-                this.getProductBySearch(val)
-            }
+          this.getData()
         },
         // 监听分类id，响应相应的商品
         categoryID: function() {
             this.getData()
-            this.search = ''
+            // this.search = ''
         },
         // 监听路由变化，更新路由传递了搜索条件
         $route: function(val) {
             if (val.name == 'GoodsList') {
                 if (val.query.search != undefined) {
-                    this.activeName = '-1'
+                    // this.activeName = '-1'
                     this.currentPage = 1
                     this.total = 0
                     this.search = val.query.search
@@ -173,7 +182,6 @@ export default {
                 const top = document.documentElement.scrollTop || document.body.scrollTop
                 const speed = Math.floor(-top / 5)
                 document.documentElement.scrollTop = document.body.scrollTop = top + speed
-
                 if (top === 0) {
                     clearInterval(timer)
                 }
@@ -182,41 +190,47 @@ export default {
         // 页码变化调用currentChange方法
         currentChange(currentPage) {
             this.currentPage = currentPage
-            if (this.search != '') {
-                this.getProductBySearch()
-            } else {
-                this.getData()
-            }
+            this.getData()
             this.backtop()
         },
         // 向后端请求分类列表数据
-        getCategory() {
-            this.$axios
-                .post('/api/product/getCategory', {})
-                .then((res) => {
-                    const val = {
-                        category_id: 0,
-                        category_name: '全部',
-                    }
-                    const cate = res.data.category
-                    cate.unshift(val)
-                    this.categoryList = cate
-                })
-                .catch((err) => {
-                    return Promise.reject(err)
-                })
-        },
-        // 向后端请求全部商品或分类商品数据
+        // getCategory() {
+        //     this.$axios
+        //         .post('/api/product/getCategory', {})
+        //         .then((res) => {
+        //             const val = {
+        //                 category_id: 0,
+        //                 category_name: '全部',
+        //             }
+        //             const cate = res.data.category
+        //             cate.unshift(val)
+        //             this.categoryList = cate
+        //         })
+        //         .catch((err) => {
+        //             return Promise.reject(err)
+        //         })
+        // },
+        // 向后端请求搜索商品或分类商品数据
         getData() {
           //请求对应分类商品数据
-            this.$axios
-                .get(apiData.search, {
-                    goodsCategoryId: this.goodsCategoryId,
+            this.$axios.get(apiData.search, {
+                  params:{ 
+                    goodsCategoryId: this.$route.params.goodsCategoryId,
+                    keyword: this.search,
+                    orderBy:this.orderBy,//排序new 按时间排序  price 按价格
+                    pageNumber: this.currentPage,//页码
+                    pageSize: this.pageSize//每页数量 接口无需传这个 先写上
+                  },
                 })
                 .then((res) => {
                   const {data={}} = res
                   if(data.resultCode == 200){
-                    this.productList = data.productList
+                    const {list,currPage,pageSize,totalCount,totalPage} = data.data
+                    this.productList = list
+                    this.currentPage = currPage
+                    this.pageSize = pageSize
+                    this.total = totalCount
+                    this.totalPage = totalPage
                   }else{
                     this.notifyError(data.message)
                   }
@@ -262,6 +276,9 @@ export default {
 </script>
 
 <style scoped>
+.active{
+  color:#ff6700;
+}
 .goods {
     background-color: #f5f5f5;
 }
@@ -287,7 +304,7 @@ export default {
 }
 .goods .nav .product-nav {
     width: 1225px;
-    height: 40px;
+    /* height: 40px; */
     line-height: 40px;
     margin: 0 auto;
 }
@@ -295,8 +312,16 @@ export default {
     /* width: 50px; */
     font-size: 16px;
     font-weight: 700;
-    float: left;
+    /* float: left; */
 }
+.nav .product-nav .orderBy{
+  padding-left:20px;
+  
+}
+.nav .product-nav .orderBy span{
+    margin-right:10px;
+    cursor: pointer;
+  }
 /* 分类标签CSS END */
 
 /* 主要内容区CSS */

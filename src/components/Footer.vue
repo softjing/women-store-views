@@ -11,17 +11,17 @@
                   </p>
               </div>
           </div>
-          <div class="github">
+          <!-- <div class="github">
               <a href="https://github.com/root-lucas/vue-xiaomi" target="_blank">
                   <div class="github-but"></div>
               </a>
-          </div>
+          </div> -->
           <div class="mod_help">
               <p>
                   <router-link to="/">首页</router-link>
                   <span>|</span>
-                  <router-link :to="{name: 'GoodsList'}">全部商品</router-link>
-                  <span>|</span>
+                  <!-- <router-link :to="{name: 'GoodsList'}">全部商品</router-link>
+                  <span>|</span> -->
                   <router-link to="/about">关于我们</router-link>
               </p>
               <p class="coty">商城版权所有 &copy; 2012-2021</p>
