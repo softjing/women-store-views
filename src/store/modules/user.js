@@ -3,9 +3,12 @@ export default {
         user: '', // 登录的用户
         showLogin: false, // 用于控制是否显示登录组件
         showAgreement: false, // 是否显示协议模态框
-        token: ''
+        token: localStorage.getItem('token')
     },
     getters: {
+      getToken(state) {
+        return state.token
+      },
         getUser(state) {
             return state.user
         },
@@ -31,6 +34,9 @@ export default {
         }
     },
     actions: {
+      setToken({ commit }, data) {
+        commit('setToken', data)
+      },
         setUser({ commit }, data) {
             commit('setUser', data)
         },

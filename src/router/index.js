@@ -38,6 +38,9 @@ const routes = [
         path: '/personCenter',
         name: 'PersonCenter',
         component: () => import('../views/PersonCenter.vue'),
+          meta: {
+            requireAuth: true, // 需要验证登录状态
+          },
     },
     {
         path: '/shoppingCart',

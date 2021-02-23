@@ -28,7 +28,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div v-if="recommendGoodses.length > 0">
                 <h5>推荐好物</h5>
                 <div class="home-wrapper-bottom">
@@ -130,7 +130,7 @@ export default {
                 {
                     title: '手机 pad',
                     children: [
-                        {   
+                        {
                             id: '1',
                             img: require('@/assets/logo.png'),
                             title: '小米11'

@@ -55,7 +55,7 @@ import md5 from 'md5';
       }
     },
     methods: {
-      ...mapMutations(['setToken']),
+      ...mapMutations(['setToken','setShowLogin']),
       // 切换账号登录和短信登录
       onShowModel() {
         this.showModel = this.showModel === 'account' ? 'message' : 'account';
@@ -105,6 +105,8 @@ import md5 from 'md5';
           const data = res.data;
           if(data.resultCode == 200) {
             localStorage.setItem('token', data.data);
+            this.setToken(data.data)
+            this.setShowLogin(true)
             setTimeout(() => {
               this.getUserInfo();
             }, 2000)

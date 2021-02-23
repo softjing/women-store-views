@@ -130,14 +130,19 @@ export default {
         },
     },
     created() {
+      this.isLogin = this.$store.getters.getToken
         // 获取浏览器localStorage，判断用户是否已经登录
         if (localStorage.getItem('user')) {
             // 如果已经登录，设置vuex登录状态
             this.setUser(JSON.parse(localStorage.getItem('user')))
         }
     },
+  beforeUpdate() {
+    this.isLogin = this.$store.getters.getToken
+  },
     methods: {
-        ...mapActions(['setUser', 'setShowLogin', 'setShoppingCart', 'setShowAgreement']),
+        ...mapActions(['setUser', 'setShowLogin', 'setShoppingCart',
+          'setShowAgreement','setToken']),
         // getUserInfo() {
         //     this.$http.get(apiData.getUserInfo).then(res => {
         //         console.log(res)
@@ -153,8 +158,12 @@ export default {
             this.visible = false
             // 清空本地登录信息
             localStorage.setItem('user', '')
+          localStorage.setItem('token', '');
             // 清空vuex登录信息
             this.setUser('')
+          this.setToken('')
+          this.setShowLogin(true)
+
             this.notifySucceed('成功退出登录')
         },
         // 注册先打开协议声明

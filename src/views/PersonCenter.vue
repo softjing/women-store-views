@@ -46,6 +46,7 @@
 </template>
 
 <script>
+  import apiData from '@/lib/apiData';
   const Upload = () => import('@/components/Upload.vue');
   const VDistpicker = () => import('v-distpicker')
   export default {
@@ -67,10 +68,15 @@
         },
       }
     },
+    created() {
+      this.getPersonInfo();
+    },
     methods: {
       // 获取个人信息
       getPersonInfo() {
-        
+        this.$axios.get(apiData.getUserInfo).then(res => {
+          console.log(res)
+        })
       }
     }
   }
