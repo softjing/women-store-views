@@ -38,6 +38,7 @@
 <script>
 import apiData from '@/lib/apiData';
 import {mapMutations} from 'vuex';
+import md5 from 'md5';
   export default {
     data() {
       return {
@@ -97,7 +98,7 @@ import {mapMutations} from 'vuex';
       login() {
         let data = {
           loginName: this.account,
-          passwordMd5: this.password
+          passwordMd5: md5(this.password)
         }
         this.$axios.post(apiData.login,data).then(res => {
           if(res.resultCode == 200) {
