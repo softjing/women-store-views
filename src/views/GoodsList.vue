@@ -56,7 +56,7 @@ export default {
             categoryList: '', //分类列表
             categoryID: [], // 分类id
             product: [
-                {
+                {   id:'1',
                     product_id: '1',
                     product_picture: 'https://img.alicdn.com/bao/uploaded/i1/92688455/O1CN01luycfl2CKRMkUneZV_!!92688455.jpg_b.jpg',
                     product_name: '衣服1',
@@ -65,6 +65,7 @@ export default {
                     product_price: 199
                 },
                 {
+                    id:'2',
                     product_id: '2',
                     product_picture: 'https://img.alicdn.com/bao/uploaded/i1/92688455/O1CN01luycfl2CKRMkUneZV_!!92688455.jpg_b.jpg',
                     product_name: '衣服2',
@@ -73,6 +74,7 @@ export default {
                     product_price: 199
                 },
                 {
+                    id:'3',
                     product_id: '3',
                     product_picture: 'https://img.alicdn.com/bao/uploaded/i3/92688455/O1CN01Bagzvh2CKRMklRq0y_!!92688455.jpg_b.jpg',
                     product_name: '衣服3',
@@ -199,6 +201,7 @@ export default {
         },
         // 向后端请求全部商品或分类商品数据
         getData() {
+          if(this.categoryID.length == 0){return}
             // 如果分类列表为空则请求全部商品数据，否则请求分类商品数据
             const api = this.categoryID.length == 0 ? '/api/product/getAllProduct' : '/api/product/getProductByCategory'
             this.$axios

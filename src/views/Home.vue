@@ -200,9 +200,8 @@ export default {
                     this.carousel = res.data.carousels;
                     // 当季流行数据
                      this.hotGoodses = res.data.hotGoodses.map(item => {
-                        let smallImgs = [];
                         return {
-                            smallImgs: smallImgs.push(item.goodsCoverImg),
+                            smallImgs: [item.goodsCoverImg],
                             id: item.goodsId,
                             title1: item.goodsName,
                             title2: item.goodsIntro,
@@ -211,9 +210,8 @@ export default {
                     });
                     // 新商品上市数据
                     this.newGoodses = res.data.newGoodses.map(item => {
-                        let smallImgs = [];
                         return {
-                            smallImgs: smallImgs.push(item.goodsCoverImg),
+                            smallImgs: [item.goodsCoverImg],
                             id: item.goodsId,
                             title1: item.goodsName,
                             title2: item.goodsIntro,
@@ -222,9 +220,8 @@ export default {
                     });
                     // 推荐好物数据
                     this.recommendGoodses = res.data.recommendGoodses.map(item => {
-                        let smallImgs = [];
                         return {
-                            smallImgs: smallImgs.push(item.goodsCoverImg),
+                            smallImgs: [item.goodsCoverImg],
                             id: item.goodsId,
                             title1: item.goodsName,
                             title2: item.goodsIntro,

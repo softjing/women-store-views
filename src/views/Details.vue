@@ -81,6 +81,7 @@
 </template>
 <script>
 import { mapActions } from 'vuex'
+import apiData from '@/lib/apiData';
 export default {
     data() {
         return {
@@ -131,6 +132,7 @@ export default {
     activated() {
         // console.log('mouted = ', this.$route.query.productID)
         if (this.$route.query.productID != undefined) {
+            this.id = this.$route.query.id
             this.productID = this.$route.query.productID
             this.notCart = false
             this.$store.state.shoppingCart.shoppingCart.forEach((item) => {
@@ -187,14 +189,14 @@ export default {
         // 加入购物车
         addShoppingCart() {
             // 判断是否登录,没有登录则显示登录组件
-            if (!this.$store.getters.getUser) {
+            if(!localStorage.getItem('token')){
                 this.$store.dispatch('setShowLogin', true)
                 return
             }
             this.$axios
-                .post('/api/user/shoppingCart/addShoppingCart', {
-                    user_id: this.$store.getters.getUser.user_id,
-                    product_id: this.productID,
+                .post(apiData.addCartItem, {
+                    goodsCount: 1,
+                    goodsId: this.id,
                 })
                 .then((res) => {
                     this.notCart = true

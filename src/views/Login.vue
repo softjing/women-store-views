@@ -114,6 +114,7 @@ import md5 from 'md5';
             this.notifyError(data.message)
           }
 
+          this.notifySucceed(res.data.message);
         })
       },
       getUserInfo() {

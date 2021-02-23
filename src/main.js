@@ -14,6 +14,12 @@ import Global from './Global'
 import Axios from 'axios'
 import '@/style/index.scss'
 
+Axios.interceptors.request.use(function (config) {
+  let token = localStorage.getItem('token');
+  config.headers.common['token'] = token;
+  return config;
+});
+
 Vue.prototype.$axios = Axios
 Vue.use(Global)
 

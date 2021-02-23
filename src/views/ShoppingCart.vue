@@ -64,7 +64,7 @@
                             <i class="el-icon-error" slot="reference" style="font-size: 18px;"></i>
                         </el-popover>
                     </div>
-                </li>
+                </li> 
                 <!-- 购物车列表END -->
             </ul>
             <div style="height:20px;background-color: #f5f5f5"></div>
@@ -108,7 +108,7 @@
 <script>
 import { mapActions } from 'vuex'
 import { mapGetters } from 'vuex'
-
+import apiData from '@/lib/apiData';
 export default {
     data() {
         return {}
@@ -155,23 +155,21 @@ export default {
         // 向后端发起删除购物车的数据库信息请求
         deleteItem(e, id, productID) {
             this.$axios
-                .post('/api/user/shoppingCart/deleteShoppingCart', {
-                    user_id: this.$store.getters.getUser.user_id,
-                    product_id: productID,
-                })
-                .then((res) => {
-                    switch (res.data.code) {
-                        case '001':
-                            // “001” 删除成功
-                            // 更新vuex状态
-                            this.deleteShoppingCart(id)
-                            // 提示删除成功信息
-                            this.notifySucceed(res.data.msg)
-                            break
-                        default:
-                            // 提示删除失败信息
-                            this.notifyError(res.data.msg)
-                    }
+                .delete(`${apiData.deleteCartItem}/${id}`,{
+                  headers:{
+                    'token':localStorage.getItem('token')
+                  }
+                }).then((res) => {
+                  const {data} = res
+                  if(data.resultCode == 200){
+                    // 更新vuex状态
+                    this.deleteShoppingCart(id)
+                    // 提示删除成功信息
+                    this.notifySucceed(data.message)
+                  }else{
+                    // 提示删除失败信息
+                    this.notifyError(data.message)
+                  }
                 })
                 .catch((err) => {
                     return Promise.reject(err)
