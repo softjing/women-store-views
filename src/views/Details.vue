@@ -20,7 +20,7 @@
             <div class="content">
                 <h1 class="name">{{ productDetails.goodsName }}</h1>
                 <p class="intro">{{ productDetails.goodsIntro }}</p>
-                <p class="store">女性商城</p>
+                <p class="store">{{productDetails.tag}}</p>
                 <div class="price">
                     <span>{{ productDetails.sellingPrice }}元</span>
                     <span v-show="productDetails.originalPrice != productDetails.sellingPrice" class="del"
@@ -55,8 +55,16 @@
             <!-- 右侧内容区END -->
         </div>
         <!-- 主要内容END -->
+        <div class="evaluate-wrapper content-warp">
+          <h1 class="title">商品详情</h1>
+          <div class="content">
+            <img :src="productDetails.goodsCoverImg" alt="">
+          </div>
+          
+        </div>
         <!-- 评论 -->
         <ul class="evaluate-wrapper">
+          <h1 class="title">商品评价</h1>
             <li v-for="item in evaluate" :key="item.id">
                 <div class="evaluate-wrapper-top">
                     <img :src="item.avatar" alt="" class="avatar">
@@ -265,7 +273,7 @@ export default {
         padding: 20px;
         margin: 0 auto;
         li{
-            border: 1px solid #ccc;
+            // border: 1px solid #ccc;
             padding: 20px 40px;
         }
         &-top{
@@ -440,6 +448,18 @@ export default {
     float: left;
     margin-right: 20px;
     color: #b0b0b0;
+}
+.content-warp,.evaluate-wrapper{
+      border: 1px solid #ccc;
+}
+.content img{
+  width: 70%;
+}
+.title{
+  font-weight: bold;
+  height: 30px;
+  line-height: 30px;
+  border-top: 
 }
 /* 主要内容CSS END */
 </style>

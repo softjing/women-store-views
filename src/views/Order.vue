@@ -29,7 +29,10 @@
                             <el-table-column label="商品"  min-width="90px"
                                              :show-overflow-tooltip="true">
                                 <template slot-scope="{row}">
+                                  <router-link :to="{ path: `/goods/${row.goodsId}`}">
                                     <el-image style="width: 90px; height: 90px; float: left;" :src="row.goodsCoverImg" fit="fill"></el-image>
+                                  </router-link>
+                                    
                                     <!--<span>{{ row.url }}</span>-->
                                 </template>
                             </el-table-column>
