@@ -13,10 +13,11 @@
 
         <!-- 我的订单主要内容 -->
 
-        <div v-if="orders.length > 0" >
+        <div v-if="orders.length > 0"
+             style="width: 80%;margin: 0 auto;background: #fff;text-align: center" >
             <el-table
                     :data="orders"
-                    style="width: 80%;margin-bottom: 20px;margin: 0 auto"
+
                     :row-key="(row) => row.orderNo"
                     @cell-click="jumpToDetail"
             >
@@ -89,6 +90,17 @@
                         label="创建时间">
                 </el-table-column>
             </el-table>
+
+            <div style="text-align: right;padding: 10px">
+                <el-pagination
+                        layout="prev, pager, next"
+                        @current-change="currentChange"
+                        :page-count="totalPage"
+                        :page-size="pageSize"
+                        :current-page="currentPage"
+                        :total="totalCount">
+                </el-pagination>
+            </div>
 
         </div>
         <!--<div class="order-content" v-if="orders.length > 0">-->
@@ -172,6 +184,10 @@ export default {
                 chooseNum: 0,
                 totalPrice: 0
             }, // 每个订单的商品数量及总价列表
+          totalCount:0,
+          totalPage:0,
+          pageSize:5,
+          currentPage:1,
         }
     },
     activated() {
@@ -192,16 +208,19 @@ export default {
       },
     },
   created() {
-    this.getOrderList();
+    this.getOrderList(1);
   },
     methods: {
-      getOrderList(){
-        this.$axios.get(apiData.order).then(res => {
+      getOrderList(pageNumber){
+        this.$axios.get(`${apiData.order}?pageNumber=${pageNumber}`).then(res => {
 
           this.orders = res.data.data.list;
-          console.log(res.data);
-
+          this.totalCount=res.data.data.totalCount;
+            this.totalPage=res.data.data.totalPage;
         })
+      },
+      currentChange(value){
+        this.getOrderList(value);
       },
         handleSelectionChange(val) {
             if(val) {
