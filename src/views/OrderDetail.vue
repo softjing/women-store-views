@@ -86,6 +86,7 @@
 </template>
 <script>
 import apiData from '@/lib/apiData';
+import { mapActions } from 'vuex'
 export default {
     data() {
         return {
@@ -115,12 +116,12 @@ export default {
   //   this.getOrderDetail();
   // },
     methods: {
+      ...mapActions(['setUser', 'setShowLogin', 'setShoppingCart',
+        'setShowAgreement','setToken']),
       getOrderDetail(){
         this.$axios.get(`${apiData.order}/${this.$route.params.id}`).then(res => {
           if(res.data.resultCode == '200'){
             this.ordersDetails = res.data.data;
-          }else if(res.data.resultCode == '416'){
-            this.$router.push({name: 'Login'});
           }
 
         })

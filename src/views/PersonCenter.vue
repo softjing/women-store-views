@@ -36,6 +36,7 @@
   import apiData from '@/lib/apiData';
   const VDistpicker = () => import('v-distpicker')
   const AddressList = () => import('./AddressList')
+  import { mapActions } from 'vuex'
   export default {
     components: {
       VDistpicker,AddressList
@@ -114,12 +115,12 @@
       this.isLogin = this.$store.getters.getToken
     },
     methods: {
+      ...mapActions(['setUser', 'setShowLogin', 'setShoppingCart',
+        'setShowAgreement','setToken']),
       // 获取个人信息
       getPersonInfo() {
         this.$axios.get(apiData.getUserInfo).then(res => {
-          if(res.data.resultCode == '416'){
-            this.$router.push({name: 'Login'});
-          }else if(res.data.resultCode == '200'){
+          if(res.data.resultCode == '200'){
             this.form.nickName = res.data.data.nickName; // 昵称
             this.form.introduceSign = res.data.data.introduceSign; // 个性签名
           }

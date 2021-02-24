@@ -25,11 +25,11 @@
       </div>
       <!-- 登录按钮和切换按钮 -->
       <el-button type="primary" style="margin: 20px 0; width: 80%;" @click="login">登录</el-button>
-      <el-link type="primary" @click="onShowModel" style="marginBottom: 20px;">{{showModelText}}</el-link>
+      <!--<el-link type="primary" @click="onShowModel" style="marginBottom: 20px;">{{showModelText}}</el-link>-->
       <div>
         <el-link type="primary" @click="register">立即注册</el-link>
-        <el-link type="primary" style="margin: 0 5px;">|</el-link>
-        <el-link type="primary" @click="forgotPwd">忘记密码</el-link>
+        <!--<el-link type="primary" style="margin: 0 5px;">|</el-link>-->
+        <!--<el-link type="primary" @click="forgotPwd">忘记密码</el-link>-->
       </div>
     </div>
   </div>

@@ -24,28 +24,37 @@ Vue.prototype.$axios = Axios
 Vue.use(Global)
 
 // 全局响应拦截器
-// Axios.interceptors.response.use(
-//     (res) => {
-//         if (res.data.code === '401') {
-//             // 401表示没有登录
-//             // 提示没有登录
-//             Vue.prototype.notifyError(res.data.msg)
-//             // 修改vuex的showLogin状态,显示登录组件
-//             store.dispatch('setShowLogin', true)
-//         }
-//         if (res.data.code === '500') {
-//             // 500表示服务器异常
-//             // 跳转error页面
-//             router.push({ path: '/error' })
-//         }
-//         return res
-//     },
-//     (error) => {
-//         // 跳转error页面
-//         router.push({ path: '/error' })
-//         return Promise.reject(error)
-//     }
-// )
+Axios.interceptors.response.use(
+    (res) => {
+        debugger
+        if (res.data.resultCode == '416') {
+            // 401表示没有登录
+            // 提示没有登录
+            Vue.prototype.notifyError(res.data.message)
+            // 修改vuex的showLogin状态,显示登录组件
+            store.dispatch('setShowLogin', true)
+            store.dispatch('setToken', "")
+            store.dispatch('setUser', "")
+
+          // 清空本地登录信息
+          localStorage.setItem('user', '')
+          localStorage.setItem('token', '');
+          // 清空vuex登录信息
+          router.push({name: 'Login'});
+        }
+        if (res.data.resultCode == '500') {
+            // 500表示服务器异常
+            // 跳转error页面
+            router.push({ path: '/error' })
+        }
+        return res
+    },
+    (error) => {
+        // 跳转error页面
+        router.push({ path: '/error' })
+        return Promise.reject(error)
+    }
+)
 
 //全局路由拦截器,在进入需要用户权限的页面前校验是否已经登录
 router.beforeResolve((to, from, next) => {
