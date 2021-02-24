@@ -21,14 +21,14 @@
                 <h1 class="name">{{ productDetails.goodsName }}</h1>
                 <p class="intro">{{ productDetails.goodsIntro }}</p>
                 <p class="store">{{productDetails.tag}}</p>
-                <div class="price">
+                <!-- <div class="price">
                     <span>{{ productDetails.sellingPrice }}元</span>
                     <span v-show="productDetails.originalPrice != productDetails.sellingPrice" class="del"
                         >{{ productDetails.originalPrice }}元</span
                     >
-                </div>
+                </div> -->
                 <div class="pro-list">
-                    <span class="pro-name">{{ productDetails.goodsName }}</span>
+                    <!-- <span class="pro-name">{{ productDetails.goodsName }}</span> -->
                     <span class="pro-price">
                         <span>{{ productDetails.sellingPrice }}元</span>
                         <span v-show="productDetails.originalPrice != productDetails.sellingPrice" class="pro-del"
@@ -58,7 +58,7 @@
         <div class="evaluate-wrapper content-warp">
           <h1 class="title">商品详情</h1>
           <div class="content">
-            <img :src="productDetails.goodsCoverImg" alt="">
+            <img :src="productDetails.goodsDetailContent" alt="">
           </div>
           
         </div>
