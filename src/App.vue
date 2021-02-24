@@ -47,8 +47,9 @@
                     </div>
                     <el-menu-item index="/">首页</el-menu-item>
                     <!-- <el-menu-item index="/goodsList">全部商品</el-menu-item> -->
-                    <div class="so">
-                        <el-input placeholder="请输入搜索内容" v-model="search">
+                    <!-- 分类页面才显示搜索框 -->
+                    <div class="so" v-if="this.$route.name == 'GoodsList'">
+                        <el-input placeholder="请输入搜索内容" v-model="search" dafault>
                             <el-button slot="append" icon="el-icon-search" @click="searchClick"></el-button>
                         </el-input>
                     </div>
@@ -59,7 +60,7 @@
             <!-- 主要区域容器 -->
             <el-main style="background: #f5f5f5;">
                 <keep-alive>
-                    <router-view></router-view>
+                    <router-view :key='key'></router-view>
                 </keep-alive>
             </el-main>
 
@@ -99,10 +100,17 @@ export default {
         ...mapGetters(['getUser', 'getNum']),
         ...mapState({
             'userName': state => state.user.user
-        })
+        }),
+        key (){
+          return this.$route.path + Math.random();
+    },
     },
     watch: {
-        // 获取vuex的登录状态
+        $route:function(val,old){
+          if(val.query.search != this.search){
+            this.search = val.query.search
+          }
+        },
         getUser: function(val) {
             if (val === '') {
                 // 用户没有登录
@@ -112,33 +120,12 @@ export default {
             }
         },
     },
-    created() {
-      this.getShoppingCart()
-    },
   beforeUpdate() {
     this.isLogin = this.$store.getters.getToken
   },
     methods: {
         ...mapActions(['setUser', 'setShowLogin', 'setShoppingCart',
           'setShowAgreement','setToken']),
-        getShoppingCart(){
-          // 用户已经登录,获取该用户的购物车信息
-          this.$axios
-              .get(apiData.shopCart)
-              .then((res) => {
-                const {data} = res
-                  if (data.resultCode == '200') {
-                      this.isLogin = true
-                      this.setShoppingCart(data.data)
-                  } else {
-                      // 提示失败信息
-                      this.notifyError(data.message)
-                  }
-              })
-              .catch((err) => {
-                  return Promise.reject(err)
-              })
-        },
         login() {
             // 跳转登录页
            this.$router.push({name: 'Login'});
@@ -181,11 +168,14 @@ export default {
         },
         // 点击搜索按钮
         searchClick() {
-            if (this.search != '') {
-                // 跳转到全部商品页面,并传递搜索条件
-                this.$router.push({ name: 'GoodsList', query: { search: this.search } })
-                this.search = ''
+          if (this.$route.name == 'GoodsList') {
+              this.$router.push({ path: this.$route.path, query: { search: this.search } })
             }
+            // if (this.search != '') {
+            //     // 跳转到全部商品页面,并传递搜索条件
+            //     this.$router.push({ name: 'GoodsList', query: { search: this.search } })
+            //     this.search = ''
+            // }
         },
     },
 }

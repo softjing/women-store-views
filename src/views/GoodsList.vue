@@ -4,7 +4,7 @@
         <div class="breadcrumb">
             <el-breadcrumb separator-class="el-icon-arrow-right">
                 <el-breadcrumb-item to="/">首页</el-breadcrumb-item>
-                <el-breadcrumb-item>全部商品</el-breadcrumb-item>
+                <!-- <el-breadcrumb-item>全部商品</el-breadcrumb-item> -->
                 <el-breadcrumb-item v-if="search">搜索</el-breadcrumb-item>
                 <el-breadcrumb-item v-else>分类</el-breadcrumb-item>
                 <el-breadcrumb-item v-if="search">{{ search }}</el-breadcrumb-item>
@@ -154,10 +154,6 @@ export default {
         orderBy:function(val) {
           this.getData()
         },
-        // 监听搜索条件，响应相应的商品
-        search: function(val) {
-          this.getData()
-        },
         // 监听分类id，响应相应的商品
         categoryID: function() {
             this.getData()
@@ -166,11 +162,12 @@ export default {
         // 监听路由变化，更新路由传递了搜索条件
         $route: function(val) {
             if (val.name == 'GoodsList') {
-                if (val.query.search != undefined) {
+                if (val.query.search != undefined && val.query.search != this.search) {
                     // this.activeName = '-1'
                     this.currentPage = 1
                     this.total = 0
                     this.search = val.query.search
+                    this.getData()
                 }
             }
         },
@@ -216,7 +213,7 @@ export default {
             this.$axios.get(apiData.search, {
                   params:{ 
                     goodsCategoryId: this.$route.params.goodsCategoryId,
-                    keyword: this.search,
+                    keyword: this.search || this.$route.query.search,
                     orderBy:this.orderBy,//排序new 按时间排序  price 按价格
                     pageNumber: this.currentPage,//页码
                     pageSize: this.pageSize//每页数量 接口无需传这个 先写上

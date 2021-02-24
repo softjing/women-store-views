@@ -182,7 +182,7 @@ export default {
         addShoppingCart() {
             // 判断是否登录,没有登录则显示登录组件
             if(!localStorage.getItem('token')){
-                this.$store.dispatch('setShowLogin', true)
+                this.notifyError('您还未登录')
                 return
             }
             this.$axios
