@@ -82,15 +82,15 @@ const routes = [
             requireAuth: true, // 需要验证登录状态
         },
     },
-    // {
-    //     path: '/error',
-    //     name: 'Error',
-    //     component: () => import('../components/Error.vue'),
-    // },
-    // {
-    //     path: '*',
-    //     redirect: '/error',
-    // },
+    {
+        path: '/error',
+        name: 'Error',
+        component: () => import('../components/Error.vue'),
+    },
+    {
+        path: '*',
+        redirect: '/error',
+    },
 ]
 
 const router = new VueRouter({
