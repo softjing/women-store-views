@@ -30,7 +30,7 @@
                         <li :class="getNum > 0 ? 'shopCart-full' : 'shopCart'">
                             <router-link to="/shoppingCart">
                                 <i class="el-icon-shopping-cart-full"></i> 购物车
-                                <span class="num">({{ getNum }})</span>
+                                <span class="num">({{ !isLogin ? '0' : getNum }})</span>
                             </router-link>
                         </li>
                     </ul>
