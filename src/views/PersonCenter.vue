@@ -2,7 +2,7 @@
   <div id="content-wrapper" class="personCenter-wrapper">
     <div style="width: 80%; margin: 0 auto;">
       <h3>个人中心</h3>
-      <h4>亲爱的<a href="javascript:;">{{userName}}</a>，填写真实的资料，有助于好友找到你哦。</h4>
+      <h4>亲爱的<a href="javascript:;">{{$store.getters.getUser.nickName}}</a>，填写真实的资料，有助于好友找到你哦。</h4>
       <div style="margin: 20px auto; border: 1px solid grey; padding: 40px;">
         <el-form ref="form" :rules="rules" :model="form" label-width="120px" >
 
@@ -123,6 +123,7 @@
           if(res.data.resultCode == '200'){
             this.form.nickName = res.data.data.nickName; // 昵称
             this.form.introduceSign = res.data.data.introduceSign; // 个性签名
+            this.setUser(res.data.data)
           }
 
         })
@@ -157,6 +158,7 @@
                 const data = res.data;
                 if(data.resultCode == 200) {
                   this.notifySucceed('修改成功');
+                  this.getPersonInfo();
                 }else{
                   this.notifyError(data.message)
                 }

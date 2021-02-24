@@ -42,11 +42,12 @@
           <p v-show="autofocus" class="login-wrapper-account-warning"><i class="el-icon-warning"></i>手机号格式不正确</p>
         </el-form-item>
         <el-form-item label="密码" prop="pass" >
-          <el-input placeholder="密码" v-model="RegisterUser.pass" show-password >
+          <el-input placeholder="密码" v-model="RegisterUser.pass" show-password clearable >
           </el-input>
         </el-form-item>
         <el-form-item label="确认密码" prop="confirmPass">
-          <el-input placeholder="再次确认密码" v-model="RegisterUser.confirmPass" show-password >
+          <el-input placeholder="再次确认密码" v-model="RegisterUser.confirmPass"
+                    show-password clearable >
           </el-input>
         </el-form-item>
         <el-form-item>
@@ -192,15 +193,16 @@ export default {
       registerUser() {
 
         //判断输入的验证码和手机的验证码是否一致
-        if(!this.verificationCode || this.verificationCode != this.lineCode){
-          this.notifyError('请输入正确的手机验证码');
-          return false;
-        }
+
             // 通过element自定义表单校验规则，校验用户输入的用户信息
             this.$refs['ruleForm'].validate((valid) => {
               console.log('valid',valid)
                 //如果通过校验开始注册
                 if (valid) {
+                  if(!this.verificationCode || this.verificationCode != this.lineCode){
+                    this.notifyError('请输入正确的手机验证码');
+                    return false;
+                  }
                     this.$axios.post(apiData.register, {
                             loginName: this.phoneNumber,
                             nickName: this.RegisterUser.name,
@@ -238,6 +240,9 @@ export default {
   background: #fff;
   // text-align: center;
   padding: 30px 60px;
+  .el-form-item{
+    margin-bottom: 32px;
+  }
   &-form{
     width: 400px;
     margin: 0 auto;

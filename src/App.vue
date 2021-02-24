@@ -11,10 +11,10 @@
                             <el-button type="text" @click="onRegister">注册</el-button>
                         </li>
                         <li v-else>
-                            欢迎
+                            欢迎{{$store.getters.getUser.nickName}}
                             <el-dropdown @command="handleCommand">
                                 <span class="el-dropdown-link">
-                                    {{ userName }}<i class="el-icon-arrow-down el-icon--right"></i>
+                                    <i class="el-icon-arrow-down el-icon--right"></i>
                                 </span>
                                 <el-dropdown-menu slot="dropdown">
                                     <el-dropdown-item command="personCenter">个人中心</el-dropdown-item>
@@ -89,6 +89,7 @@ export default {
             visible: false,
             activeIndex: '', // 头部导航栏选中的标签
             search: '', // 搜索条件
+          nickName:''
         }
     },
     beforeUpdate() {
@@ -97,7 +98,10 @@ export default {
         this.activeIndex = this.$route.path
     },
     created() {
-      this.getShoppingCart()
+      this.getShoppingCart();
+      if(localStorage.getItem('token')){
+        this.getPersonInfo();
+      }
     },
     computed: {
         ...mapGetters(['getUser', 'getNum']),
@@ -114,7 +118,10 @@ export default {
             this.search = val.query.search
           }
           if(val.name == 'Home'){
-            this.getShoppingCart()
+            this.getShoppingCart();
+            if(localStorage.getItem('token')){
+              this.getPersonInfo();
+            }
           }
         },
         getUser: function(val) {
@@ -132,6 +139,15 @@ export default {
     methods: {
         ...mapActions(['setUser', 'setShowLogin', 'setShoppingCart',
           'setShowAgreement','setToken']),
+      // 获取个人信息
+      getPersonInfo() {
+        this.$axios.get(apiData.getUserInfo).then(res => {
+          if(res.data.resultCode == '200'){
+            this.setUser(res.data.data)
+          }
+
+        })
+      },
         getShoppingCart(){
           if(!localStorage.getItem('token')){
             return
