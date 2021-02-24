@@ -41,7 +41,7 @@
                     <el-button class="shop-cart" :disabled="dis" @click="addShoppingCart">
                         {{ notCart ? '已加入购物车' : '加入购物车' }}
                     </el-button>
-                    <el-button class="like" @click="addCollect">喜欢</el-button>
+                    <!--<el-button class="like" @click="addCollect">喜欢</el-button>-->
                 </div>
                 <!-- 内容区底部按钮END -->
                 <div class="pro-policy">
@@ -210,12 +210,12 @@ export default {
                 .then((res) => {
                     this.notCart = true
                     const {data} = res
-                    
+
                     if(data.resultCode == 200){
                       // 添加购物车后 重新获取购物车数据 更新购物车数量值
                       this.getShopCart()
                       // this.unshiftShoppingCart(data.shoppingCartData && data.shoppingCartData[0])
-                      this.notifySucceed(data.message)
+                      this.notifySucceed('添加购物车成功')
                     }else{
                       this.notifyError(data.message)
                     }

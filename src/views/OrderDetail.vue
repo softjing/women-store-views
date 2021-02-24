@@ -65,21 +65,31 @@
             </div>
         </div>
         <!-- 模拟支付 -->
-        <el-drawer
-                title="支付方式"
+
+        <el-dialog
+                title="支付"
                 :visible.sync="drawer"
-                direction="btt"
-        >
-            <el-select v-model="payType" placeholder="选择支付方式">
+                width="30%"
+              >
+                <el-select v-model="payType" placeholder="选择支付方式">
                 <el-option label="无" :value="0"></el-option>
                 <el-option label="支付宝" :value="1"></el-option>
                 <el-option label="微信" :value="2"></el-option>
             </el-select>
-            <div style="text-align: right; margin: 10px 0 0">
+    <div style="text-align: right; margin: 10px 0 0">
                 <el-button type="primary" size="mini" @click="paySuccessBtn">确定
                 </el-button>
             </div>
-        </el-drawer>
+
+        </el-dialog>
+        <!--<el-drawer-->
+                <!--title="支付方式"-->
+                <!--:visible.sync="drawer"-->
+                <!--direction="btt"-->
+        <!--&gt;-->
+
+
+        <!--</el-drawer>-->
 
         <!-- 我的订单主要内容END -->
     </div>
@@ -131,14 +141,11 @@ export default {
         this.$axios
           .get(`${apiData.paySuccess}?orderNo=${this.ordersDetails.orderNo}&payType=${this.payType}`)
           .then((res) => {
-            this.drawer = false
-            switch (res.data.resultCode) {
-              case '200':
-                this.notifySucceed('支付成功');
-                break;
-              default:
-                // 提示失败信息
-                this.notifySucceed(res.data.msg)
+            this.drawer = false;
+            if(res.data.resultCode == '200'){
+              this.notifySucceed('支付成功');
+            }else{
+              this.notifySucceed(res.data.message)
             }
             this.getOrderDetail();
           })

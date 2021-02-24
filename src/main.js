@@ -41,11 +41,11 @@ Axios.interceptors.response.use(
           // 清空vuex登录信息
           router.push({name: 'Login'});
         }
-        if (res.data.resultCode == '500') {
-            // 500表示服务器异常
-            // 跳转error页面
-            router.push({ path: '/error' })
-        }
+        // if (res.data.resultCode == '500') {
+        //     // 500表示服务器异常
+        //     // 跳转error页面
+        //     router.push({ path: '/error' })
+        // }
         return res
     },
     (error) => {

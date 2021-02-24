@@ -24,7 +24,7 @@
           <el-button type="primary">取消更改</el-button>
         </div>
       </div>
-      <address-list :ismove="true" :isedit="true"  :isshowdefault="false" :canEdit="true"/>
+      <address-list :ismove="true" :isedit="true"  :isshowdefault="true" :canEdit="true"/>
 
 
 

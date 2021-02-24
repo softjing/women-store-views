@@ -23,9 +23,9 @@
                                     <el-dropdown-item command="logout">退出登录</el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
-                            <el-badge :value="3" class="badge-item">
-                                <el-link type="primary" size="small" style="marginLeft: 5px;">我的消息</el-link>
-                            </el-badge>
+                            <!--<el-badge :value="3" class="badge-item">-->
+                                <!--<el-link type="primary" size="small" style="marginLeft: 5px;">我的消息</el-link>-->
+                            <!--</el-badge>-->
                         </li>
                         <li :class="getNum > 0 ? 'shopCart-full' : 'shopCart'">
                             <router-link to="/shoppingCart">
@@ -119,7 +119,7 @@ export default {
                 // 用户没有登录
                 this.setShoppingCart([])
             } else {
-                
+
             }
         },
     },

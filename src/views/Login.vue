@@ -44,8 +44,8 @@ import md5 from 'md5';
       return {
         showModel: 'account', // 展示模块
         showModelText: '手机短信登录',
-        account: '18725788789', // 账号
-        password: 'a11111', // 密码
+        account: '15768845027', // 账号
+        password: 'b80a344632f3a6d904fbe418730cf1a3', // 密码
         phoneNumber: '', // 手机号
         verificationCode: '', // 验证码
         autofocus: false, // 聚焦
@@ -99,7 +99,7 @@ import md5 from 'md5';
       login() {
         let data = {
           loginName: this.account,
-          passwordMd5:md5(this.password)
+          passwordMd5:this.password //md5(this.password)
         }
         this.$axios.post(apiData.login,data).then(res => {
           const data = res.data;
@@ -116,7 +116,7 @@ import md5 from 'md5';
             this.notifyError(data.message)
           }
 
-          this.notifySucceed(res.data.message);
+
         })
       },
       getUserInfo() {

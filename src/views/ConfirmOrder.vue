@@ -118,11 +118,27 @@
         </div>
 
         <!-- 模拟支付 -->
-        <el-drawer
-                title="支付方式"
+        <!--<el-drawer-->
+                <!--title="支付方式"-->
+                <!--:visible.sync="drawer"-->
+                <!--direction="btt"-->
+                <!--&gt;-->
+            <!--<el-select v-model="payType" placeholder="选择支付方式">-->
+                <!--<el-option label="无" :value="0"></el-option>-->
+                <!--<el-option label="支付宝" :value="1"></el-option>-->
+                <!--<el-option label="微信" :value="2"></el-option>-->
+            <!--</el-select>-->
+            <!--<div style="text-align: right; margin: 10px 0 0">-->
+                <!--<el-button type="primary" size="mini" @click="paySuccessBtn">确定-->
+                <!--</el-button>-->
+            <!--</div>-->
+        <!--</el-drawer>-->
+
+        <el-dialog
+                title="支付"
                 :visible.sync="drawer"
-                direction="btt"
-                >
+                width="30%"
+        >
             <el-select v-model="payType" placeholder="选择支付方式">
                 <el-option label="无" :value="0"></el-option>
                 <el-option label="支付宝" :value="1"></el-option>
@@ -132,7 +148,8 @@
                 <el-button type="primary" size="mini" @click="paySuccessBtn">确定
                 </el-button>
             </div>
-        </el-drawer>
+
+        </el-dialog>
 
         <!-- 主要内容容器END -->
         <!--<el-dialog title="收货地址" :visible.sync="dialogFormVisible">-->
@@ -285,56 +302,25 @@ export default {
                   }else{
                     this.notifyError(res.data.message)
                   }
-                    //let products = this.getCheckGoods
-                    // switch (res.data.code) {
-                    //     // “001”代表结算成功
-                    //     case '001':
-                    //         for (let i = 0; i < products.length; i++) {
-                    //             const temp = products[i]
-                    //             // 删除已经结算的购物车商品
-                    //             this.deleteShoppingCart(i)
-                    //         }
-                    //         // 提示结算结果
-                    //         this.notifySucceed(res.data.msg)
-                    //         // 跳转我的订单页面
-                    //         this.$router.push({ path: '/order' })
-                    //         break
-                    //     default:
-                    //         // 提示失败信息
-                    //         this.notifyError(res.data.msg)
-                    // }
                 })
                 .catch((err) => {
                     return Promise.reject(err)
                 })
         },
       paySuccessBtn() {
+          const orderNo = this.orderNo;
             this.$axios
-                .get(`${apiData.paySuccess}?orderNo=${this.orderNo}&payType=${this.payType}`)
+                .get(`${apiData.paySuccess}?orderNo=${orderNo}&payType=${this.payType}`)
                 .then((res) => {
                     this.orderNo = '';
-                    this.drawer = false
-                    let products = this.getCheckGoods
-                    switch (res.data.resultCode) {
-                        // “001”代表结算成功
-                        case '001':
-                            for (let i = 0; i < products.length; i++) {
-                                const temp = products[i]
-                                // 删除已经结算的购物车商品
-                                this.deleteShoppingCart(i)
-                            }
-                            // 提示结算结果
-                            this.notifySucceed(res.data.msg)
-                            // 跳转我的订单页面
-                            this.$router.push({ path: '/order' })
-                            break
-                      case '200':
-                        this.notifySucceed('支付成功');
-                        break;
-                        default:
-                            // 提示失败信息
-                            this.notifyError(res.data.msg)
+                    this.drawer = false;
+                    if(res.data.resultCode == '200'){
+                      this.notifySucceed('支付成功');
+                      this.$router.push({name:'OrderDetail',params: {id:orderNo}})
+                    }else{
+                      this.notifyError(res.data.message)
                     }
+
                 })
                 .catch((err) => {
                     return Promise.reject(err)
