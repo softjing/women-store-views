@@ -96,6 +96,9 @@ export default {
         // 组件加载即激活的路由（default-active="activeIndex" == index）
         this.activeIndex = this.$route.path
     },
+    created() {
+      this.getShoppingCart()
+    },
     computed: {
         ...mapGetters(['getUser', 'getNum']),
         ...mapState({
@@ -126,6 +129,27 @@ export default {
     methods: {
         ...mapActions(['setUser', 'setShowLogin', 'setShoppingCart',
           'setShowAgreement','setToken']),
+        getShoppingCart(){
+          if(!localStorage.getItem('token')){
+            return
+          }
+          // 用户已经登录,获取该用户的购物车信息
+          this.$axios
+              .get(apiData.shopCart)
+              .then((res) => {
+                const {data} = res
+                  if (data.resultCode == '200') {
+                      this.isLogin= true
+                      this.setShoppingCart(data.data)
+                  } else {
+                      // 提示失败信息
+                      this.notifyError(data.message)
+                  }
+              })
+              .catch((err) => {
+                  return Promise.reject(err)
+              })
+        },
         login() {
             // 跳转登录页
            this.$router.push({name: 'Login'});

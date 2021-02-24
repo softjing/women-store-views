@@ -43,7 +43,7 @@ import md5 from 'md5';
     data() {
       return {
         showModel: 'account', // 展示模块
-        showModelText: '手机短信登录/注册',
+        showModelText: '手机短信登录',
         account: '18725788789', // 账号
         password: 'a11111', // 密码
         phoneNumber: '', // 手机号
@@ -59,7 +59,7 @@ import md5 from 'md5';
       // 切换账号登录和短信登录
       onShowModel() {
         this.showModel = this.showModel === 'account' ? 'message' : 'account';
-        this.showModelText = this.showModel === 'account' ? '手机短信登录/注册' : '用户名密码登录';
+        this.showModelText = this.showModel === 'account' ? '手机短信登录' : '用户名密码登录';
       },
       // 获取短信验证码接口
       getVerificationCode() {

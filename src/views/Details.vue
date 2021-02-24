@@ -144,7 +144,7 @@ export default {
         // this.getDetails();
     },
     methods: {
-        ...mapActions(['unshiftShoppingCart', 'addShoppingCartNum']),
+        ...mapActions(['unshiftShoppingCart', 'addShoppingCartNum','setShoppingCart']),
         showReview(img) {
             this.reviewImg = img;
             this.showImg = true;
@@ -178,6 +178,23 @@ export default {
                     return Promise.reject(err)
                 })
         },
+        getShopCart(){
+          // 用户已经登录,获取该用户的购物车信息
+          this.$axios
+              .get(apiData.shopCart)
+              .then((res) => {
+                const {data} = res
+                  if (data.resultCode == '200') {
+                      this.setShoppingCart(data.data)
+                  } else {
+                      // 提示失败信息
+                      this.notifyError(data.message)
+                  }
+              })
+              .catch((err) => {
+                  return Promise.reject(err)
+              })
+        },
         // 加入购物车
         addShoppingCart() {
             // 判断是否登录,没有登录则显示登录组件
@@ -193,9 +210,11 @@ export default {
                 .then((res) => {
                     this.notCart = true
                     const {data} = res
-
+                    
                     if(data.resultCode == 200){
-                      this.unshiftShoppingCart(data.shoppingCartData && data.shoppingCartData[0])
+                      // 添加购物车后 重新获取购物车数据 更新购物车数量值
+                      this.getShopCart()
+                      // this.unshiftShoppingCart(data.shoppingCartData && data.shoppingCartData[0])
                       this.notifySucceed(data.message)
                     }else{
                       this.notifyError(data.message)

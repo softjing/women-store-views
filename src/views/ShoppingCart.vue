@@ -116,28 +116,8 @@ export default {
           visible:false
         }
     },
-    created() {
-      this.getShoppingCart()
-    },
     methods: {
-        ...mapActions(['updateShoppingCart', 'deleteShoppingCart', 'checkAll','setShoppingCart']),
-        getShoppingCart(){
-          // 用户已经登录,获取该用户的购物车信息
-          this.$axios
-              .get(apiData.shopCart)
-              .then((res) => {
-                const {data} = res
-                  if (data.resultCode == '200') {
-                      this.setShoppingCart(data.data)
-                  } else {
-                      // 提示失败信息
-                      this.notifyError(data.message)
-                  }
-              })
-              .catch((err) => {
-                  return Promise.reject(err)
-              })
-        },
+        ...mapActions(['updateShoppingCart', 'deleteShoppingCart', 'checkAll']),
         // 修改商品数量的时候调用该函数
         handleChange(value, index,cartItemId) {
             // 向后端发起更新购物车的数据库信息请求
