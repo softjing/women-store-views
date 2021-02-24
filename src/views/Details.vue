@@ -4,14 +4,15 @@
         <div class="main">
             <!-- 左侧商品轮播图 -->
             <div class="block">
-                <el-carousel height="560px" v-if="productPicture.length > 1">
+              <my-magnify :previewImg="productDetails.goodsCoverImg" :zoomImg="productDetails.goodsCoverImg"></my-magnify>
+                <!-- <el-carousel height="560px" v-if="productPicture.length > 1">
                     <el-carousel-item v-for="item in productPicture" :key="item.id">
                         <img style="height:560px;" :src="item.product_picture" :alt="item.intro" />
                     </el-carousel-item>
                 </el-carousel>
                 <div v-if="productPicture.length == 1">
                     <img style="height:560px;" :src="productPicture[0].product_picture" :alt="productPicture[0].intro" />
-                </div>
+                </div> -->
             </div>
             <!-- 左侧商品轮播图END -->
 
@@ -82,6 +83,7 @@
 <script>
 import { mapActions } from 'vuex'
 import apiData from '@/lib/apiData';
+import MyMagnify from "@/components/Magnify.vue";
 export default {
     data() {
         return {
@@ -128,6 +130,9 @@ export default {
             ],
         }
     },
+    components: {
+    MyMagnify
+  },
     // 通过路由获取商品id
     activated() {
         this.goodsId = this.$route.params.categoryID

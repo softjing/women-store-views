@@ -117,10 +117,16 @@ export default {
             state.shoppingCart.splice(index, 1)
         },
         checkAll(state, data) {
+          let arr = []
             // 点击全选按钮，更改每个商品的勾选状态
             for (let i = 0; i < state.shoppingCart.length; i++) {
-                state.shoppingCart[i].check = data
+              arr.push({
+                ...state.shoppingCart[i],
+                check : data
+              })
+                // state.shoppingCart[i].check = data
             }
+            state.shoppingCart=arr
         },
     },
     actions: {

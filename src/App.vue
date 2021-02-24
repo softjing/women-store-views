@@ -113,6 +113,9 @@ export default {
           if(val.query.search != this.search){
             this.search = val.query.search
           }
+          if(val.name == 'Home'){
+            this.getShoppingCart()
+          }
         },
         getUser: function(val) {
             if (val === '') {
