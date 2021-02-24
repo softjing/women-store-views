@@ -44,11 +44,11 @@
                 <div class="goods-list">
                     <ul>
                         <li v-for="item in getCheckGoods" :key="item.id">
-                            <img :src="item.productImg" />
-                            <span class="pro-name">{{ item.productName }}</span>
-                            <span class="pro-price">{{ item.price }}元 x {{ item.num }}</span>
+                            <img :src="item.goodsCoverImg" />
+                            <span class="pro-name">{{ item.goodsName }}</span>
+                            <span class="pro-price">{{ item.sellingPrice }}元 x {{ item.goodsCount }}</span>
                             <span class="pro-status"></span>
-                            <span class="pro-total">{{ item.price * item.num }}元</span>
+                            <span class="pro-total">{{ item.sellingPrice * item.goodsCount }}元</span>
                         </li>
                     </ul>
                 </div>
