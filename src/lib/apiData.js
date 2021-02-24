@@ -31,6 +31,10 @@ const apiData = {
   saveOrder:`${INTERFACE}saveOrder`,
   // 模拟支付
   paySuccess:`${INTERFACE}paySuccess`,
+  // 订单列表接口
+  order:`${INTERFACE}order`,
+  // 订单列表接口
+  order:`${INTERFACE}order`,
 }
 
 

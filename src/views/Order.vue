@@ -12,64 +12,143 @@
         <!-- 我的订单头部END -->
 
         <!-- 我的订单主要内容 -->
-        <div class="order-content" v-if="orders.length > 0">
-                 <el-table
-                    ref="multipleTable"
+
+        <div v-if="orders.length > 0" >
+            <el-table
                     :data="orders"
-                    tooltip-effect="dark"
-                    style="width: 1225px;margin: 0 auto;"
-                    @selection-change="handleSelectionChange"
+                    style="width: 80%;margin-bottom: 20px;margin: 0 auto"
+                    :row-key="(row) => row.orderNo"
+                    @cell-click="jumpToDetail"
+            >
+                <el-table-column type="expand">
+                    <template slot-scope="props">
+                        <el-table
+                                :data="props.row.womanMallOrderItemVOS"
+                                style="width: 100%">
+                            <el-table-column label="商品"  min-width="90px"
+                                             :show-overflow-tooltip="true">
+                                <template slot-scope="{row}">
+                                    <el-image style="width: 90px; height: 90px; float: left;" :src="row.goodsCoverImg" fit="fill"></el-image>
+                                    <!--<span>{{ row.url }}</span>-->
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                    prop="goodsName"
+                                    label="商品名称"
+                                    min-width="90px"
+                                    >
+                            </el-table-column>
+                            <el-table-column
+                                    prop="sellingPrice"
+                                    label="售价">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="goodsCount"
+                                    label="数量">
+                            </el-table-column>
+                        </el-table>
+                        <!--<ul>-->
+                            <!--<li  v-for="(o, index) in props.row.womanMallOrderItemVOS" >-->
+                                <!--<span><img :src="o.goodsCoverImg" style="width: 60px;"-->
+                                                              <!--alt=""></span>-->
+                                <!--<span>{{ o.goodsName }}</span>-->
+                                <!--<span>{{ o.sellingPrice }}</span>-->
+                                <!--<span>{{ o.goodsCount }}</span>-->
+                            <!--</li>-->
+                        <!--</ul>-->
+                        <!--<el-form label-position="left" inline class="demo-table-expand">-->
+                            <!--<el-form-item label="商品名称">-->
+
+                            <!--</el-form-item>-->
+                        <!--</el-form>-->
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        prop="orderNo"
+                        label="订单号"
                 >
-                    <el-table-column type="selection" label="全选" width="100" />
-                    <el-table-column label="商品名称"  width="400">
-                        <template slot-scope="scope">
-                            <img :src="scope.row.img" alt="" style="float: left;width: 80px;maxHeight: 100px;">
-                            <p style="float: left;lineHeight: 80px;marginLeft: 40px;">{{scope.row.name}}</p>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="单价"  width="140" >
-                        <template slot-scope="scope">
-                            <span>{{scope.row.price}}元</span>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="数量" width="240">
-                        <template slot-scope="scope">
-                            <el-input-number v-model="scope.row.number" :min="1" :max="100" :disabled="scope.row.isNumber"></el-input-number>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="小计"  width="140" >
-                        <template slot-scope="scope">
-                            <span style="color: orange">
-                                {{scope.row.price * scope.row.number}}元
-                            </span>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="操作"  width="140" >
-                        <template slot-scope="scope">
-                            <el-link type="primary" style="marginRight: 40px;" @click="jumpToDetail(scope.row)">详情</el-link>
-                            <el-link type="danger" @click="deleteOrder(scope.row.id)">删除</el-link>
-                        </template>
-                    </el-table-column>
-                </el-table>
-               
-                <div class="order-bar" style="margin: 0 auto;">
-                    <div class="order-bar-left">
-                        <span class="order-total">
-                            共
-                            <span class="order-total-num">{{ total.totalNum }}</span> 件商品
-                            已选 <span class="order-total-num"> {{ total.chooseNum }} </span> 件商品
-                        </span>
-                    </div>
-                    <div class="order-bar-right">
-                        <span>
-                            <span class="total-price-title">合计：</span>
-                            <span class="total-price">{{ total.totalPrice }}元</span>
-                        </span>
-                        <el-button type="primary" style="margin:0 0 10px 20px;">去结算</el-button>
-                    </div>
-                </div>
-            <div style="margin-top:-40px;"></div>
+                </el-table-column>
+                <el-table-column
+                        prop="totalPrice"
+                        label="订单价格"
+                        sortable
+                        width="180">
+                </el-table-column>
+                <el-table-column
+                        prop="payType"
+                        label="订单支付方式">
+                </el-table-column>
+                <el-table-column
+                        prop="orderStatusString"
+                        label="订单状态"
+                        sortable
+                        width="180">
+                </el-table-column>
+                <el-table-column
+                        prop="createTime"
+                        label="创建时间">
+                </el-table-column>
+            </el-table>
+
         </div>
+        <!--<div class="order-content" v-if="orders.length > 0">-->
+                 <!--<el-table-->
+                    <!--ref="multipleTable"-->
+                    <!--:data="orders"-->
+                    <!--tooltip-effect="dark"-->
+                    <!--style="width: 1225px;margin: 0 auto;"-->
+                    <!--@selection-change="handleSelectionChange"-->
+                <!--&gt;-->
+                    <!--<el-table-column type="selection" label="全选" width="100" />-->
+                    <!--<el-table-column label="商品名称"  width="400">-->
+                        <!--<template slot-scope="scope">-->
+                            <!--<img :src="scope.row.img" alt="" style="float: left;width: 80px;maxHeight: 100px;">-->
+                            <!--<p style="float: left;lineHeight: 80px;marginLeft: 40px;">{{scope.row.name}}</p>-->
+                        <!--</template>-->
+                    <!--</el-table-column>-->
+                    <!--<el-table-column label="单价"  width="140" >-->
+                        <!--<template slot-scope="scope">-->
+                            <!--<span>{{scope.row.price}}元</span>-->
+                        <!--</template>-->
+                    <!--</el-table-column>-->
+                    <!--<el-table-column label="数量" width="240">-->
+                        <!--<template slot-scope="scope">-->
+                            <!--<el-input-number v-model="scope.row.number" :min="1" :max="100" :disabled="scope.row.isNumber"></el-input-number>-->
+                        <!--</template>-->
+                    <!--</el-table-column>-->
+                    <!--<el-table-column label="小计"  width="140" >-->
+                        <!--<template slot-scope="scope">-->
+                            <!--<span style="color: orange">-->
+                                <!--{{scope.row.price * scope.row.number}}元-->
+                            <!--</span>-->
+                        <!--</template>-->
+                    <!--</el-table-column>-->
+                    <!--<el-table-column label="操作"  width="140" >-->
+                        <!--<template slot-scope="scope">-->
+                            <!--<el-link type="primary" style="marginRight: 40px;" @click="jumpToDetail(scope.row)">详情</el-link>-->
+                            <!--<el-link type="danger" @click="deleteOrder(scope.row.id)">删除</el-link>-->
+                        <!--</template>-->
+                    <!--</el-table-column>-->
+                <!--</el-table>-->
+               <!---->
+                <!--<div class="order-bar" style="margin: 0 auto;">-->
+                    <!--<div class="order-bar-left">-->
+                        <!--<span class="order-total">-->
+                            <!--共-->
+                            <!--<span class="order-total-num">{{ total.totalNum }}</span> 件商品-->
+                            <!--已选 <span class="order-total-num"> {{ total.chooseNum }} </span> 件商品-->
+                        <!--</span>-->
+                    <!--</div>-->
+                    <!--<div class="order-bar-right">-->
+                        <!--<span>-->
+                            <!--<span class="total-price-title">合计：</span>-->
+                            <!--<span class="total-price">{{ total.totalPrice }}元</span>-->
+                        <!--</span>-->
+                        <!--<el-button type="primary" style="margin:0 0 10px 20px;">去结算</el-button>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--<div style="margin-top:-40px;"></div>-->
+        <!--</div>-->
         <!-- 我的订单主要内容END -->
 
         <!-- 订单为空的时候显示的内容 -->
@@ -87,48 +166,7 @@ import apiData from '@/lib/apiData';
 export default {
     data() {
         return {
-            orders: [
-                {
-                    id: '1',
-                    img: 'https://g-search1.alicdn.com/img/bao/uploaded/i4/i2/199343403/O1CN01DtT3QB1b0cTHfYtyR_!!0-item_pic.jpg_250x250.jpg',
-                    name: '衣服1',
-                    price: 233,
-                    number: 1,
-                    isNumber: true
-                },
-                {
-                    id: '2',
-                    img: 'https://g-search1.alicdn.com/img/bao/uploaded/i4/i2/199343403/O1CN01DtT3QB1b0cTHfYtyR_!!0-item_pic.jpg_250x250.jpg',
-                    name: '衣服2',
-                    price: 233,
-                    number: 2,
-                    isNumber: true
-                },
-                {
-                    id: '3',
-                    img: 'https://g-search1.alicdn.com/img/bao/uploaded/i4/i2/199343403/O1CN01DtT3QB1b0cTHfYtyR_!!0-item_pic.jpg_250x250.jpg',
-                    name: '衣服3',
-                    price: 451,
-                    number: 1,
-                    isNumber: true
-                },
-                {
-                    id: '4',
-                    img: 'https://g-search1.alicdn.com/img/bao/uploaded/i4/i2/199343403/O1CN01DtT3QB1b0cTHfYtyR_!!0-item_pic.jpg_250x250.jpg',
-                    name: '衣服4',
-                    price: 23,
-                    number: 1,
-                    isNumber: true
-                },
-                {
-                    id: '5',
-                    img: 'https://g-search1.alicdn.com/img/bao/uploaded/i4/i2/199343403/O1CN01DtT3QB1b0cTHfYtyR_!!0-item_pic.jpg_250x250.jpg',
-                    name: '衣服5',
-                    price: 33,
-                    number: 3,
-                    isNumber: true
-                },
-           ],
+            orders: [],
             total: {
                 totalNum: 0,
                 chooseNum: 0,
@@ -150,7 +188,18 @@ export default {
             immediate: true
         }
     },
+  created() {
+    this.getOrderList();
+  },
     methods: {
+      getOrderList(){
+        this.$axios.get(apiData.order).then(res => {
+
+          this.orders = res.data.data.list;
+          console.log(res.data);
+
+        })
+      },
         handleSelectionChange(val) {
             if(val) {
                 this.total.chooseNum = val.length;
@@ -162,13 +211,17 @@ export default {
                 this.total.totalPrice = totalPrice;
             }
         },
-        jumpToDetail({id}) {
-            this.$router.push({
-                name: 'Details',
-                params: {
-                    categoryID: id
-                }
-            })
+        jumpToDetail(row, column, cell, event) {
+        console.log(row, column, cell, event)
+          if(column.property == "orderNo"){
+            this.$router.push({name:'OrderDetail',params: {id:row.orderNo}})
+          }
+            // this.$router.push({
+            //     name: 'Details',
+            //     params: {
+            //         categoryID: id
+            //     }
+            // })
         },
         getOrder() {
             this.$http

@@ -74,6 +74,14 @@ const routes = [
             requireAuth: true, // 需要验证登录状态
         },
     },
+    {
+        path: '/orderDetail/:id',
+        name: 'OrderDetail',
+        component: () => import('../views/OrderDetail.vue'),
+        meta: {
+            requireAuth: true, // 需要验证登录状态
+        },
+    },
     // {
     //     path: '/error',
     //     name: 'Error',
