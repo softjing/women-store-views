@@ -124,8 +124,9 @@
                 direction="btt"
                 >
             <el-select v-model="payType" placeholder="选择支付方式">
-                <el-option label="支付宝" :value="0"></el-option>
-                <el-option label="微信" :value="1"></el-option>
+                <el-option label="无" :value="0"></el-option>
+                <el-option label="支付宝" :value="1"></el-option>
+                <el-option label="微信" :value="2"></el-option>
             </el-select>
             <div style="text-align: right; margin: 10px 0 0">
                 <el-button type="primary" size="mini" @click="paySuccessBtn">确定
@@ -277,7 +278,13 @@ export default {
                 })
                 .then((res) => {
                     this.orderNo = res.data.data;
+
+                  if(res.data.resultCode == '200'){
+                    this.notifySucceed('成功');
                     this.drawer = true
+                  }else{
+                    this.notifyError(res.data.message)
+                  }
                     //let products = this.getCheckGoods
                     // switch (res.data.code) {
                     //     // “001”代表结算成功
@@ -308,7 +315,7 @@ export default {
                     this.orderNo = '';
                     this.drawer = false
                     let products = this.getCheckGoods
-                    switch (res.data.code) {
+                    switch (res.data.resultCode) {
                         // “001”代表结算成功
                         case '001':
                             for (let i = 0; i < products.length; i++) {

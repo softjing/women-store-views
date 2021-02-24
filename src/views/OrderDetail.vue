@@ -51,7 +51,36 @@
                         label="数量">
                 </el-table-column>
             </el-table>
+            <div class="btn-box" > <!-- 0.待支付 1.待确认 2.待发货 3:已发货 4.交易成功 -->
+                <el-button @click="cancelOperate"
+                           v-if="ordersDetails.orderStatus == 0 ||
+                           ordersDetails.orderStatus == 1 "
+                >取消订单</el-button>
+                <el-button type="danger" @click="endOperate"
+                           v-if="ordersDetails.orderStatus == 0 " style="width: 200px"
+                >支付</el-button>
+                <el-button type="success" @click="endOperate"
+                           v-if="ordersDetails.orderStatus == 3 " style="width: 200px"
+                >确认收货</el-button>
+            </div>
         </div>
+        <!-- 模拟支付 -->
+        <el-drawer
+                title="支付方式"
+                :visible.sync="drawer"
+                direction="btt"
+        >
+            <el-select v-model="payType" placeholder="选择支付方式">
+                <el-option label="无" :value="0"></el-option>
+                <el-option label="支付宝" :value="1"></el-option>
+                <el-option label="微信" :value="2"></el-option>
+            </el-select>
+            <div style="text-align: right; margin: 10px 0 0">
+                <el-button type="primary" size="mini" @click="paySuccessBtn">确定
+                </el-button>
+            </div>
+        </el-drawer>
+
         <!-- 我的订单主要内容END -->
     </div>
 </template>
@@ -61,6 +90,9 @@ export default {
     data() {
         return {
             ordersDetails: {},
+          drawer:false,
+          payType:0,
+          orderNo:''
         }
     },
     activated() {
@@ -69,7 +101,9 @@ export default {
     },
   watch: {
     $route(){
-      this.getOrderDetail();
+      if(this.$route.params.id){
+        this.getOrderDetail();
+      }
     },
 
   },
@@ -83,8 +117,66 @@ export default {
     methods: {
       getOrderDetail(){
         this.$axios.get(`${apiData.order}/${this.$route.params.id}`).then(res => {
-          this.ordersDetails = res.data.data;
+          if(res.data.resultCode == '200'){
+            this.ordersDetails = res.data.data;
+          }else if(res.data.resultCode == '416'){
+            this.$router.push({name: 'Login'});
+          }
+
         })
+      },
+      paySuccessBtn() {
+        console.log(this.payType)
+        this.$axios
+          .get(`${apiData.paySuccess}?orderNo=${this.ordersDetails.orderNo}&payType=${this.payType}`)
+          .then((res) => {
+            this.drawer = false
+            switch (res.data.resultCode) {
+              case '200':
+                this.notifySucceed('支付成功');
+                break;
+              default:
+                // 提示失败信息
+                this.notifySucceed(res.data.msg)
+            }
+            this.getOrderDetail();
+          })
+          .catch((err) => {
+            return Promise.reject(err)
+          })
+      },
+      endOperate(){
+        //确认收货
+        if(this.ordersDetails.payStatus){
+          this.$axios.put(`${apiData.order}/${this.$route.params.id}/finish`).then(res => {
+            if(res.data.resultCode == '200'){
+              this.notifySucceed('成功');
+              this.getOrderDetail();
+            }else{
+              this.notifyError(data.message)
+            }
+
+          })
+        }else{
+          this.drawer = true;
+          //去结算
+          // this.$axios.get(`${apiData.order}/${this.$route.params.id}`).then(res => {
+          //   this.ordersDetails = res.data.data;
+          // })
+        }
+      },
+
+      cancelOperate(){
+        //取消订单
+        this.$axios.put(`${apiData.order}/${this.$route.params.id}/cancel`).then(res => {
+          if(res.data.resultCode == '200'){
+            this.notifySucceed('成功');
+            this.getOrderDetail();
+          }else{
+            this.notifyError(data.message)
+          }
+        })
+
       },
     },
 }
@@ -117,5 +209,9 @@ export default {
 }
 .orderDetail .order-content .order-content-ttem{
     padding:10px 0;
+}
+.orderDetail .btn-box{
+    text-align: right;
+    margin-top: 20px;
 }
 </style>

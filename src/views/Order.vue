@@ -186,7 +186,10 @@ export default {
                 }
             },
             immediate: true
-        }
+        },
+      $route(){
+        this.getOrderList();
+      },
     },
   created() {
     this.getOrderList();
