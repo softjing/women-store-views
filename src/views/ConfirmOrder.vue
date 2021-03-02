@@ -46,6 +46,7 @@
                         <li v-for="item in getCheckGoods" :key="item.id">
                             <img :src="item.goodsCoverImg" />
                             <span class="pro-name">{{ item.goodsName }}</span>
+                            <span class="pro-size">{{ item.goodsSize }}码</span>
                             <span class="pro-price">{{ item.sellingPrice }}元 x {{ item.goodsCount }}</span>
                             <span class="pro-status"></span>
                             <span class="pro-total">{{ item.sellingPrice * item.goodsCount }}元</span>
@@ -447,7 +448,13 @@ export default {
 }
 .confirmOrder .content .section-goods .goods-list li .pro-name {
     float: left;
-    width: 650px;
+    width: 550px;
+    line-height: 30px;
+}
+.confirmOrder .content .section-goods .goods-list li .pro-size{
+    float: left;
+    width: 100px;
+    text-align: center;
     line-height: 30px;
 }
 .confirmOrder .content .section-goods .goods-list li .pro-price {

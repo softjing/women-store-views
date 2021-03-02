@@ -23,6 +23,7 @@
                     <div class="pro-img"></div>
                     <div class="pro-name">商品名称</div>
                     <div class="pro-price">单价</div>
+                    <div class="pro-size">尺码</div>
                     <div class="pro-num">数量</div>
                     <div class="pro-total">小计</div>
                     <div class="pro-action">操作</div>
@@ -47,6 +48,8 @@
                         }}</router-link>
                     </div>
                     <div class="pro-price">{{ item.sellingPrice }}元</div>
+                    <div class="pro-size">{{ item.goodsSize }}码</div>
+
                     <div class="pro-num">
                         <el-input-number
                             size="small"
@@ -266,15 +269,15 @@ export default {
 .shoppingCart .content ul .pro-name a:hover {
     color: #ff6700;
 }
-.shoppingCart .content ul .pro-price {
+.shoppingCart .content ul .pro-price,.shoppingCart .content ul .pro-size {
     float: left;
-    width: 140px;
+    width: 60px;
     padding-right: 18px;
     text-align: center;
 }
 .shoppingCart .content ul .pro-num {
     float: left;
-    width: 150px;
+    width: 140px;
     text-align: center;
 }
 .shoppingCart .content ul .pro-total {
@@ -288,7 +291,7 @@ export default {
 }
 .shoppingCart .content ul .pro-action {
     float: left;
-    width: 80px;
+    width: 60px;
     text-align: center;
 }
 .shoppingCart .content ul .pro-action i:hover {

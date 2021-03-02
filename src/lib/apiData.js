@@ -33,8 +33,10 @@ const apiData = {
   paySuccess:`${INTERFACE}paySuccess`,
   // 订单列表接口
   order:`${INTERFACE}order`,
-  // 订单列表接口
-  order:`${INTERFACE}order`,
+  // 评论商品接口
+  comment:`${INTERFACE}reviews/insert`,
+  // 获取详情商品评价接口
+  getComment:`${INTERFACE}reviews/get`,
 }
 
 

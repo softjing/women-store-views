@@ -27,6 +27,14 @@
                         >{{ productDetails.originalPrice }}元</span
                     >
                 </div> -->
+                <div style="margin-top: 30px">
+                  <span>尺码：&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                  <el-radio-group v-model="size" size="medium" fill='#f25807'>
+                    <el-radio-button label="S" >S码</el-radio-button>
+                    <el-radio-button label="M">M码</el-radio-button>
+                    <el-radio-button label="XL">L码</el-radio-button>
+                  </el-radio-group>
+                </div>
                 <div class="pro-list">
                     <!-- <span class="pro-name">{{ productDetails.goodsName }}</span> -->
                     <span class="pro-price">
@@ -69,13 +77,13 @@
                 <div class="evaluate-wrapper-top">
                     <img :src="item.avatar" alt="" class="avatar">
                     <span class="name">{{item.name}}</span>
-                    <span class="time">发布时间： {{item.time}}</span>
+                    <!-- <span class="time">发布时间： {{item.time}}||''</span> -->
                 </div>
                 <div class="evaluate-wrapper-center">
                     <p>{{item.evaluate}}</p>
-                    <div v-if="item.imgs.length > 0">
+                    <!-- <div v-if="item.imgs.length > 0">
                         <img v-for="(it, i) in item.imgs" :key="i" :src="it" alt="" @click="showReview(it)">
-                    </div>
+                    </div> -->
                 </div>
             </li>
         </ul>
@@ -95,6 +103,11 @@ import MyMagnify from "@/components/Magnify.vue";
 export default {
     data() {
         return {
+          imgs:[
+'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2856846879,389279115&fm=26&gp=0.jpg',
+'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=3392663359,4194879068&fm=26&gp=0.jpg'
+          ],
+            size:'',
             reviewImg: '',
             showImg: false,
             dis: false, // 控制“加入购物车按钮是否可用”
@@ -119,22 +132,6 @@ export default {
             notCart: false,
             // 评论列表
             evaluate: [
-                {
-                    id: '1',
-                    avatar: 'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2856846879,389279115&fm=26&gp=0.jpg',
-                    name: '用户1',
-                    time: '2020-10-10',
-                    evaluate: '很好很好很好很好很好很好很好很好很好很好',
-                    imgs: ['https://g-search1.alicdn.com/img/bao/uploaded/i4/i2/199343403/O1CN01DtT3QB1b0cTHfYtyR_!!0-item_pic.jpg_250x250.jpg','https://g-search1.alicdn.com/img/bao/uploaded/i4/i2/199343403/O1CN01DtT3QB1b0cTHfYtyR_!!0-item_pic.jpg_250x250.jpg']
-                },
-                {
-                    id: '2',
-                    avatar: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=3392663359,4194879068&fm=26&gp=0.jpg',
-                    name: '用户2',
-                    time: '2020-10-12',
-                    evaluate: '很好很好很好很好很好很好很好很好很好很好good goods;)',
-                    imgs: ['https://g-search1.alicdn.com/img/bao/uploaded/i4/i2/199343403/O1CN01DtT3QB1b0cTHfYtyR_!!0-item_pic.jpg_250x250.jpg','https://g-search1.alicdn.com/img/bao/uploaded/i4/i2/199343403/O1CN01DtT3QB1b0cTHfYtyR_!!0-item_pic.jpg_250x250.jpg','https://img.alicdn.com/bao/uploaded/i1/92688455/O1CN01luycfl2CKRMkUneZV_!!92688455.jpg_b.jpg']
-                }
             ],
         }
     },
@@ -170,6 +167,24 @@ export default {
                   const {data} = res
                   if(data.resultCode == 200){
                     this.productDetails = data.data
+                  }else{
+                    this.notifyError(data.message)
+                  }
+                })
+                .catch((err) => {
+                    return Promise.reject(err)
+                })
+            this.$axios
+            .get(apiData.getComment+'?goodsIds='+this.$route.params.categoryID)
+                .then((res) => {
+                  const {data} = res
+                  if(data.resultCode == 200){
+                    this.evaluate = data.data.map((val,i)=>({
+                      name: '匿名用户',
+                      evaluate:val.content,
+                      avatar:i%2==0?this.imgs[0]:this.imgs[i],
+                      id:i
+                    }))
                   }else{
                     this.notifyError(data.message)
                   }
@@ -215,10 +230,15 @@ export default {
                 this.notifyError('您还未登录')
                 return
             }
+            if(!this.size){
+              this.notifyError('请选择尺码')
+              return
+            }
             this.$axios
                 .post(apiData.shopCart, {
                     goodsCount: 1,
                     goodsId: this.goodsId,
+                    goodsSize:this.size
                 })
                 .then((res) => {
                     this.notCart = true

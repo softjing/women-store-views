@@ -141,9 +141,16 @@ export default {
           'setShowAgreement','setToken']),
       // 获取个人信息
       getPersonInfo() {
+        let userId;
+        this.$axios.get(apiData.getAddress).then(res => {
+                if(res.data.resultCode == 200) {
+                    userId = res.data.data[0] && res.data.data[0].userId
+                }
+            })
         this.$axios.get(apiData.getUserInfo).then(res => {
           if(res.data.resultCode == '200'){
             this.setUser(res.data.data)
+            localStorage.setItem('userInfo',JSON.stringify({...res.data.data,userId}))
           }
 
         })

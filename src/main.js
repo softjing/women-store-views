@@ -26,6 +26,7 @@ Vue.use(Global)
 // 全局响应拦截器
 Axios.interceptors.response.use(
     (res) => {
+      
         if (res.data.resultCode == '416') {
             // 401表示没有登录
             // 提示没有登录

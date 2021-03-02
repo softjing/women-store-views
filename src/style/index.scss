@@ -29,3 +29,14 @@ html {overflow-y: scroll;}
   min-height: calc(100vh - 200px);
   background: #fff;
 }
+.el-radio-button__orig-radio:checked+.el-radio-button__inner{
+  border-color: #ff6700;
+  box-shadow: -1px 0 0 0 #ff6700;
+}
+.el-radio-button__orig-radio:checked+.el-radio-button__inner,
+#details .main .content .button .shop-cart:hover{
+  background-color: #ff6700;
+}
+.el-radio-button__inner:hover{
+  color: #ff6700;
+}
