@@ -182,7 +182,7 @@ export default {
                     this.evaluate = data.data.map((val,i)=>({
                       name: '匿名用户',
                       evaluate:val.content,
-                      avatar:i%2==0?this.imgs[0]:this.imgs[i],
+                      avatar:i%2==0?this.imgs[0]:this.imgs[1],
                       id:i
                     }))
                   }else{
