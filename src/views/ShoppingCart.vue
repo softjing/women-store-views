@@ -54,7 +54,7 @@
                         <el-input-number
                             size="small"
                             :value="item.goodsCount"
-                            @change="(value)=>handleChange(value, index,item.cartItemId)"
+                            @change="(value)=>handleChange(value, index,item.cartItemId,item.goodsSize)"
                             :min="1"
                         ></el-input-number>
                     </div>
@@ -122,12 +122,13 @@ export default {
     methods: {
         ...mapActions(['updateShoppingCart', 'deleteShoppingCart', 'checkAll']),
         // 修改商品数量的时候调用该函数
-        handleChange(value, index,cartItemId) {
+        handleChange(value, index,cartItemId,goodsSize) {
             // 向后端发起更新购物车的数据库信息请求
             this.$axios
                 .put(apiData.shopCart, {
                     "cartItemId": cartItemId,
                     "goodsCount": value,
+                    "goodsSize":goodsSize
                 })
                 .then((res) => {
                   const {data} = res

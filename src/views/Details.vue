@@ -32,7 +32,7 @@
                   <el-radio-group v-model="size" size="medium" fill='#f25807'>
                     <el-radio-button label="S" >S码</el-radio-button>
                     <el-radio-button label="M">M码</el-radio-button>
-                    <el-radio-button label="XL">L码</el-radio-button>
+                    <el-radio-button label="L">L码</el-radio-button>
                   </el-radio-group>
                 </div>
                 <div class="pro-list">
