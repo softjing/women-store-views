@@ -234,7 +234,7 @@ export default {
         ...mapGetters(['getCheckNum', 'getTotalPrice', 'getCheckGoods']),
     },
     methods: {
-        ...mapActions(['deleteShoppingCart']),
+        ...mapActions(['deleteShoppingCart','setShoppingCart']),
         getAddress() {
             this.$http.get(apiData.getAddress).then(res => {
                 if(res.resultCode == 200) {
@@ -296,10 +296,25 @@ export default {
                 })
                 .then((res) => {
                     this.orderNo = res.data.data;
-
                   if(res.data.resultCode == '200'){
                     this.notifySucceed('成功');
                     this.drawer = true
+                    //下单后 重新获取购物车
+                    this.$axios
+                    .get(apiData.shopCart)
+                    .then((res) => {
+                      const {data} = res
+                        if (data.resultCode == '200') {
+                            this.setShoppingCart(data.data)
+                        } else {
+                            // 提示失败信息
+                            this.notifyError(data.message)
+                        }
+                    })
+                    .catch((err) => {
+                        return Promise.reject(err)
+                    })
+
                   }else{
                     this.notifyError(res.data.message)
                   }
