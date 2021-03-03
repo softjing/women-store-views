@@ -27,12 +27,10 @@
                         >{{ productDetails.originalPrice }}元</span
                     >
                 </div> -->
-                <div style="margin-top: 30px">
+                <div style="margin-top: 30px" v-if="productDetails.goodsStockList && productDetails.goodsStockList.length > 0">
                   <span>尺码：&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                  <el-radio-group v-model="size" size="medium" fill='#f25807'>
-                    <el-radio-button label="S" >S码</el-radio-button>
-                    <el-radio-button label="M">M码</el-radio-button>
-                    <el-radio-button label="L">L码</el-radio-button>
+                  <el-radio-group v-model="size" size="medium" fill='#f25807' >
+                    <el-radio-button v-for="(val,i) in productDetails.goodsStockList" :key="i" :label="val.goodsSize" :disabled="val.goodsStockNum == 0 || !val.goodsStockNum">{{val.goodsSize}}码</el-radio-button>
                   </el-radio-group>
                 </div>
                 <div class="pro-list">

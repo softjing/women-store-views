@@ -1,10 +1,10 @@
 <template>
   <div class="homeList-wrapper">
     <img :src="bigImg || objData.smallImgs[0]" alt="" class="bigImg" @click="jumpToDetail(objData.id)">
-    <ul class="homeList-wrapper-smallImg">
+    <!-- <ul class="homeList-wrapper-smallImg">
       <li v-for="(item, index) in objData.smallImgs" :class="{'selected': index == nowChoose}" :key="index" @click="choose(item, index)"><img :src="item" alt=""></li>
-    </ul>
-    <p class="title">{{objData.title1}}</p>
+    </ul> -->
+    <p class="title" style='marginTop:20px'>{{objData.title1}}</p>
     <p v-if="objData.title2" class="title">{{objData.title2}}</p>
     <p>￥{{objData.price}}</p>
   </div>

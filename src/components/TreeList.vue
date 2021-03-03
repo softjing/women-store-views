@@ -8,7 +8,7 @@
           <!-- <img :src="it.img" alt="" class="smallImg"> -->
         <p style="fontSize:18px;fontWeight:bold">{{it.categoryName}}</p>
           <ul style="paddingLeft:10px">
-            <li class="classTwo" v-for="(value, index) in it.thirdLevelCategoryVOS" :key="index" @click="jumpToPro(value.categoryId)">
+            <li class="classTwo" v-for="(value, index) in it.thirdLevelCategoryVOS" :key="index" @click="jumpToPro(value.categoryId,value.categoryName)">
             {{value.categoryName}}
             </li>
           </ul>
@@ -58,11 +58,14 @@
     },
     methods: {
       // 点击跳转商品列表页
-      jumpToPro(id) {
+      jumpToPro(id,categoryName) {
         this.$router.push({
           name: 'GoodsList',
           params: {
             goodsCategoryId: id,
+          },
+          query:{
+            categoryName
           }
         });
       }

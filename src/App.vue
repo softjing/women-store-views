@@ -219,7 +219,7 @@ export default {
         // 点击搜索按钮
         searchClick() {
           if (this.$route.name == 'GoodsList') {
-              this.$router.push({ path: this.$route.path, query: { search: this.search } })
+              this.$router.push({ path: this.$route.path, query: { ...this.$route.query,search: this.search } })
             }
             // if (this.search != '') {
             //     // 跳转到全部商品页面,并传递搜索条件

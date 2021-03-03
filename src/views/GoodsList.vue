@@ -15,7 +15,7 @@
         <!-- 分类标签 -->
         <div class="nav">
             <div class="product-nav">
-                <div class=".title">分类</div>
+                <div class=".title">分类{{name}} </div>
                 <div class="orderBy">
                   排序：
                   <span :class="{active:orderBy=='new'}" @click='orderBy="new"'>按时间</span>
@@ -100,6 +100,7 @@ export default {
             currentPage: 1, //当前页码
             // activeName: '-1', // 分类列表当前选中的id
             search: '', // 搜索条件
+            name:''
         }
     },
     created() {
@@ -108,6 +109,7 @@ export default {
     },
     activated() {
       this.categoryID = this.$route.params.goodsCategoryId
+      this.name = this.$route.query.categoryName?': '+this.$route.query.categoryName:''
         // this.activeName = '-1' // 初始化分类列表当前选中的id为-1
         // this.total = 0 // 初始化商品总量为0
         // this.currentPage = 1 //初始化当前页码为1
