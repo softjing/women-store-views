@@ -70,8 +70,9 @@
         <el-table-column prop="goodsCount" label="数量"> </el-table-column>
         <el-table-column label="操作" v-if="ordersDetails.orderStatus==4">
           <template slot-scope="{ row }">
+            <!-- contentStatus   1已评论 0未评论 -->
             <el-button size="mini" @click="showDialog(row.goodsId)"
-              v-if="row.goodsId" >立即评价</el-button>
+              v-if="row.contentStatus == 0" >立即评价</el-button>
             <el-button size="mini" v-else disabled>已评价</el-button>
           </template>
         </el-table-column>
