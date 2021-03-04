@@ -71,7 +71,7 @@
         <el-table-column label="操作" v-if="ordersDetails.orderStatus==4">
           <template slot-scope="{ row }">
             <!-- contentStatus   1已评论 0未评论 -->
-            <el-button size="mini" @click="showDialog(row.goodsId)"
+            <el-button size="mini" @click="showDialog(row.goodsId,row.goodsSize)"
               v-if="row.contentStatus == 0" >立即评价</el-button>
             <el-button size="mini" v-else disabled>已评价</el-button>
           </template>
@@ -155,6 +155,7 @@ export default {
       payType: 0,
       orderNo: "",
       id: "",//评价的商品id
+      goodsSize:"",//评价商品的尺码
       userId:'',//用户id
       dialogFormVisible: false,
       commentForm: {
@@ -243,14 +244,16 @@ export default {
         // })
       }
     },
-    showDialog(id) {
+    showDialog(id,goodsSize) {
       // 存储当前评价商品id
       this.id = id;
+      this.goodsSize = goodsSize
       // 打开评价弹窗
       this.dialogFormVisible = true;
     },
     resetForm(formName) {
       this.id = "";
+      this.goodsSize = "";
       this.dialogFormVisible = false;
       this.$refs[formName].resetFields();
     },
@@ -263,6 +266,7 @@ export default {
             orderId: this.ordersDetails.orderNo,
             content: this[formName].val,
             userId: this.userId,
+            goodsSize:this.goodsSize
             // createTime:new Date(),
             // mallUser: {
             //   userId: this.userId,
