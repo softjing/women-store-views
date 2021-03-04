@@ -127,6 +127,7 @@ export default {
       left: 485px;
       border: 1px solid #dc7a7a;;
       top: 0;
+      z-index:9999;
       img {
         width:180%;
         position: absolute;
