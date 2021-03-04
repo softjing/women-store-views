@@ -1,7 +1,7 @@
 <template>
   <div class="magnify">
     <div class="preview-box" @mousemove="move($event)"  @mouseout="out" ref="previewBox">
-      <img width="100%" :src="previewImg" alt="">
+      <img width="100%" :src="previewImg" alt="" style="objectFit:contain;height:100%;">
       <div class="hover-box" ref="hoverBox"></div>
     </div>
     <div class="zoom-box" v-show="zoomVisiable" ref="zoomBox">
