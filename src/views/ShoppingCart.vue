@@ -263,6 +263,9 @@ export default {
 .shoppingCart .content ul .pro-name {
     float: left;
     width: 380px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .shoppingCart .content ul .pro-name a {
     color: #424242;
