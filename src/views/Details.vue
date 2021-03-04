@@ -36,12 +36,12 @@
                 <div class="pro-list">
                     <!-- <span class="pro-name">{{ productDetails.goodsName }}</span> -->
                     <span class="pro-price">
-                        <span>{{ productDetails.sellingPrice }}元</span>
                         <span v-show="productDetails.originalPrice != productDetails.sellingPrice" class="pro-del"
-                            >{{ productDetails.originalPrice }}元</span
+                            >原价：{{ productDetails.originalPrice }}元</span
                         >
+                        <span style='color:orange'>售价：{{ productDetails.sellingPrice }}元</span>
                     </span>
-                    <p class="price-sum">总计 : {{ productDetails.sellingPrice }}元</p>
+                    <!-- <p class="price-sum">总计 : {{ productDetails.sellingPrice }}元</p> -->
                 </div>
                 <!-- 内容区底部按钮 -->
                 <div class="button">
@@ -423,10 +423,14 @@ export default {
     color: #616161;
 }
 #details .main .content .pro-list .pro-price {
-    float: right;
+    /* float: right; */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size:20px;
 }
 #details .main .content .pro-list .pro-price .pro-del {
-    margin-left: 10px;
+    /* margin-left: 10px; */
     text-decoration: line-through;
 }
 #details .main .content .pro-list .price-sum {

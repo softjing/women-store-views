@@ -215,6 +215,7 @@ export default {
   },
     methods: {
       getOrderList(pageNumber){
+        debugger
         this.$axios.get(`${apiData.order}?pageNumber=${pageNumber}`).then(res => {
           this.orders = res.data.data.list;
           this.totalCount=res.data.data.totalCount;
